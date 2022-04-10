@@ -23,6 +23,7 @@ services:
     volumes:
       - ./src:/var/www/html
       - ./docker/app/www.conf:/etc/php-fpm.d/www.conf
+    working_dir: /var/www/html
   web:
     build:
       context: ./docker/web

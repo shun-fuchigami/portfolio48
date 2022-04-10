@@ -1,12 +1,13 @@
+*本番環境
 VPS:ConohaVPS
 ドメイン:Freenom
 OS:CentOS Linux release 7.4.1708 (Core)
-httpサーバー：nginx 1.21.6
-APIサーバー：PHP 7.4.28
-APサーバー：Node 16.14.2
-DBサーバー：MySQL 8.0.28
+httpサーバー:nginx 1.21.6
+APIサーバー:PHP 7.4.28
+APサーバー:Node 16.14.2
+DBサーバー:MySQL 8.0.28
 
-＊Nginxインストール
+*Nginxインストール
   公式ドキュメント
     https://nginx.org/en/linux_packages.html#RHEL-CentOS
   参考
@@ -55,7 +56,7 @@ DBサーバー：MySQL 8.0.28
   8.nginx.confの実行ユーザを変更
     user  yyyy;
 
-＊Node.jsインストール
+*Node.jsインストール
   公式ドキュメント
     https://github.com/nodesource/distributions/blob/master/README.md
   参考
@@ -68,7 +69,7 @@ DBサーバー：MySQL 8.0.28
     sudo yum install -y nodejs
 
 
-＊MySQLインストール
+*MySQLインストール
   ダウンロードサイト
     https://dev.mysql.com/downloads/
   公式ドキュメント
@@ -192,8 +193,12 @@ DBサーバー：MySQL 8.0.28
   ln -s /usr/local/bin/git /usr/bin/git
 
 
-＊開発環境(Docker)
+*開発環境(Docker)
+  参考
+    https://www.aruse.net/entry/2019/10/06/115704
 
 webコンテナ :centos7 nginx
 appコンテナ :centos7 php-fpm / node.js
 dbコンテナ  :mysql (dbコンテナは公式イメージをそのまま利用)
+
+composer create-project laravel/laravel:^8.0 portfolio48

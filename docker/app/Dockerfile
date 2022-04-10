@@ -1,6 +1,14 @@
 FROM --platform=linux/amd64 centos:centos7.4.1708
 
 RUN  yum update -y
+
+RUN  yum remove git -y
+RUN  yum install -y curl-devel expat-devel gettext-devel openssl-devel zlib-devel perl-ExtUtils-MakeMaker wget make gcc zip unzip
+RUN  wget https://mirrors.edge.kernel.org/pub/software/scm/git/git-2.9.5.tar.gz --no-check-certificate
+RUN  tar -zxf git-2.9.5.tar.gz
+RUN  cd  git-2.9.5 && make prefix=/usr/local all && make prefix=/usr/local install
+
+
 RUN  curl -fsSL https://rpm.nodesource.com/setup_lts.x | bash -
 RUN  yum install -y nodejs
 
