@@ -19,7 +19,16 @@
         "postcss": "^8.1.14",
         "react": "^17.0.2",
         "react-dom": "^17.0.2",
+        "resolve-url-loader": "^5.0.0",
         "sass": "^1.32.11",
         "sass-loader": "^11.0.1"
+    },
+    "dependencies": {
+        "@emotion/react": "^11.9.0",
+        "@emotion/styled": "^11.8.1",
+        "@mui/icons-material": "^5.6.0",
+        "@mui/material": "^5.6.0",
+        "react-intersection-observer": "^8.33.1",
+        "react-router-dom": "^6.3.0"
     }
 }
