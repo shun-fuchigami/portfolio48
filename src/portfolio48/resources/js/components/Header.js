@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { useState } from 'react';
 import AppBar from '@mui/material/AppBar';
@@ -15,11 +15,11 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import { Link } from '@mui/material';
 import SportsSoccerIcon from '@mui/icons-material/SportsSoccer';
+import axios from 'axios';
 
 const pages = ['トップページ','募集を探す',];
-const settings = ['アカウント', 'ログアウト',];
 
-const ResponsiveAppBar = () => {
+const Header = (props) => {
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
 
@@ -37,6 +37,60 @@ const ResponsiveAppBar = () => {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+
+  function handleLogout(){
+      axios.post('/api/logout')
+      .then((response=>{
+          console.log('ログアウト');
+          console.log(response.data);
+          props.handleSetStatus("success");
+          window.location.href = '/';
+      }))
+      .catch((e)=>{
+        console.log(e)
+        props.handleSetStatus("error");
+      })
+  }
+
+  /**
+   * Todo 後で色を保持するよう修正
+   */
+  const [randomColor,setRandomColor] = useState(()=>{
+    let r = Math.floor(Math.random() * 150);
+    let g = Math.floor(Math.random() * 150);
+    let b = Math.floor(Math.random() * 150);
+    let color = `rgb(${r},${g},${b})`;
+    return color
+    })
+
+    function stringToColor(string) {
+        let hash = 0;
+        let i;
+
+        /* eslint-disable no-bitwise */
+        for (i = 0; i < string.length; i += 1) {
+          hash = string.charCodeAt(i) + ((hash << 5) - hash);
+        }
+
+        let color = '#';
+
+        for (i = 0; i < 3; i += 1) {
+          const value = (hash >> (i * 8)) & 0xff;
+          color += `00${value.toString(16)}`.slice(-2);
+        }
+        /* eslint-enable no-bitwise */
+
+        return color;
+      }
+
+      function stringAvatar(name) {
+        return {
+          sx: {
+            bgcolor: stringToColor(name),
+          },
+          children: `${name.split()[0][0]}`,
+        };
+      }
 
   return (
     <AppBar position="static" >
@@ -94,8 +148,7 @@ const ResponsiveAppBar = () => {
           </Box>
 
         {/* 中央アプリ名 */}
-          <SportsSoccerIcon sx={{display: { xs: 'flex', md: 'none' } }}
-          />
+          <SportsSoccerIcon sx={{display: { xs: 'flex', md: 'none' } }}/>
           <Typography
             variant="h5"
             noWrap
@@ -120,11 +173,12 @@ const ResponsiveAppBar = () => {
             ))}
           </Box>
 
-        {/* setting */}
-          <Box sx={{ flexGrow: 0 }}>
+        {/* セッティングメニュー */}
+          <Box sx={{ flexGrow: 0  }} >
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                <Avatar alt={props.authUser.name} src="/" {...stringAvatar(props.authUser.name)} />
+                <Typography textAlign="center" sx={{pl:.5, color:'white'}}> {props.authUser.name} </Typography>
               </IconButton>
             </Tooltip>
             <Menu
@@ -143,11 +197,49 @@ const ResponsiveAppBar = () => {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
+                <MenuItem
+                    onClick={handleCloseUserMenu}
+                    component={Link} href="/login"
+                    sx={{ display: props.authUser.isLogin ? "none" : "block"}}
+                    >
+                  <Typography textAlign="center">ログイン</Typography>
                 </MenuItem>
-              ))}
+
+                <MenuItem
+                    onClick={handleCloseUserMenu}
+                    component={Link} href="/register"
+                    sx={{ display: props.authUser.isLogin ? "none" : "block"}}
+                    >
+                  <Typography textAlign="center">新規ユーザ登録</Typography>
+                </MenuItem>
+
+                <MenuItem
+                    onClick={handleCloseUserMenu}
+                    component={Link} href={`/account/${props.authUser.name}`}
+                    sx={{ display: props.authUser.isLogin ? "block" : "none"}}
+                    >
+                  <Typography textAlign="center">アカウント</Typography>
+                </MenuItem>
+
+                <MenuItem
+                    onClick={handleCloseUserMenu}
+                    component={Link} href="/team/create"
+                    sx={{ display: props.authUser.isLogin ? "block" : "none"}}
+                >
+                    <Typography textAlign="center">チームを作る</Typography>
+                </MenuItem>
+
+                <MenuItem
+                    onClick={(e)=>{
+                        handleCloseUserMenu();
+                        handleLogout();
+                        }}
+                    component={Link}
+                    sx={{ display: props.authUser.isLogin ? "block" : "none"}}
+                >
+                    <Typography textAlign="center">ログアウト</Typography>
+                </MenuItem>
+
             </Menu>
           </Box>
         </Toolbar>
@@ -155,4 +247,4 @@ const ResponsiveAppBar = () => {
     </AppBar>
   );
 };
-export default ResponsiveAppBar;
+export default Header;

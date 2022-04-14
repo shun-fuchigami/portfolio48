@@ -8,7 +8,7 @@ export default function Footer(){
     return(
         <AppBar
             position="static"
-            sx={{mt:1}}>
+            sx={{mt:5}}>
              <Container
                 maxWidth='md'
                 sx={{ display:'flex', flexWrap:'wrap', justifyContent : 'space-around'}}

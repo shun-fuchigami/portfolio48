@@ -5,7 +5,17 @@ import { Link } from '@mui/material';
 import HomeIcon from '@mui/icons-material/Home';
 import ArrowCircleUpIcon from '@mui/icons-material/ArrowCircleUp';
 
-export default function FollowNavi(props) {
+export default function FooterNavi(props) {
+
+    const style ={
+        display:'flex',
+        alignItems:'center',
+        p:.5,
+        pr:1 ,
+        borderRadius:'4px' ,
+        bgcolor:'rgba(255,255,255,0.7)'
+
+    }
 
     return (
             <Grid
@@ -14,12 +24,14 @@ export default function FollowNavi(props) {
                 direction="row"
                 justifyContent="center"
                 alignItems="center"
-                sx={ !props.inView&&{ position:'fixed', bottom: 50, right:0, left:0  }}
+                sx={ !props.inView ?
+                     { position:'fixed', bottom: 50, right:0, left:0,  }
+                     :{ position:'relative', mt:2  }}
             >
                 <Grid item >
                     <Link
                         underline='hover'
-                        sx={{ display:'flex', alignItems:'center'}}
+                        sx={style}
                         color='inherit'
                         href='/'>
                         <HomeIcon sx={{ mr: 0.5 }}  />
@@ -30,9 +42,8 @@ export default function FollowNavi(props) {
                 <Grid item>
                     <Link
                         underline='hover'
-                        sx={{ display:'flex', alignItems:'center'}}
+                        sx={style}
                         color='inherit'
-                        href='/'
                         onClick={(e)=>{
                             e.preventDefault();
                             window.scrollTo({ top: 0, behavior: 'smooth' });

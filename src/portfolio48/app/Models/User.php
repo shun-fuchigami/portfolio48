@@ -41,4 +41,13 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    function getTeams(){
+        return $this->belongsToMany('App\Models\Team', 'team_user', 'user_id' ,'team_id')->withTimestamps();
+    }
+
+    function getRecruitments(){
+        return $this->belongsToMany('App\Models\Recruitment','recruitment_user', 'user_id', 'recruitment_id')->withTimestamps();
+    }
+
 }
