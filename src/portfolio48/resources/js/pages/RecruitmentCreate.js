@@ -208,7 +208,7 @@ export default function RecruitmentCreate(props) {
         .then(response=>{
             console.log(response.data);
             props.handleSetStatus("success");
-            window.location.href = `/team?userId=${props.authUser.id}`;
+            window.location.href = `/team/?teamId=${query.get("teamId")}`;
         })
         .catch((e)=>{
             console.log(e)

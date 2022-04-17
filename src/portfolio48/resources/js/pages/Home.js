@@ -87,14 +87,14 @@ export function Home(){
                                             />
                                         <Divider variant="middle"/>
                                         <CardContent sx={{mt:1}}>
-                                            {   recruitment.desc.length <= 100?
+                                            {   recruitment.desc.length <= 55?
                                                     <Typography variant='caption'>
                                                         {textNewLine(recruitment.desc)}
                                                     </Typography>
                                                 :
                                                     <div>
                                                         <Typography variant='caption'>
-                                                            {textNewLine(recruitment.desc.substr(0,100))}
+                                                            {textNewLine(recruitment.desc.substr(0,55))}
                                                         </Typography>
                                                         <Typography variant='caption' sx={{color:'rgba(0,0,0,0.6)'}}>
                                                             {' ...(続きは詳細ページ)... '}
