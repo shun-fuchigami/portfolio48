@@ -329,22 +329,22 @@ composer require laravel/ui
 php artisan ui react --auth
 ```
 
+```
 php artisan make:migration create_users_table --create=users **作成済み
 php artisan make:migration create_teams_table --create=teams
 php artisan make:migration create_tags_table --create=tags
 php artisan make:migration create_recruitments_table --create=recruitments
 
-
 php artisan make:migration create_'team_user'_table --create=team_user
 php artisan make:migration create_'recruitment_team'_table --create=recruitment_team
-php artisan make:migration create_'recruitment_tag_team'_table --create=recruitment_tag_team
-php artisan make:migration create_'recruitment_team_user'_table --create=recruitment_team_user
+php artisan make:migration create_'recruitment_tag'_table --create=recruitment_tag_team
+php artisan make:migration create_'recruitment_user'_table --create=recruitment_team_user
 
 php artisan make:model Team
 php artisan make:model Tag
 php artisan make:model Recruitment
-php artisan make:model Skill
 
 php artisan make:controller Api/TeamController
 php artisan make:controller Api/TagController
 php artisan make:controller Api/RecruitmentController
+```
