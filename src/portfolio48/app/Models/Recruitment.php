@@ -11,16 +11,16 @@ class Recruitment extends Model
 
     protected $guarded = ['id'];
 
-    function getTeams(){
-        $this->belongsToMany('App\Models\Team', 'recruitment_team','recruitment_id' ,'team_id')->withTimestamps();
+    function teams(){
+        return $this->belongsTo('App\Models\Team','team_id');
     }
 
-    function getUsers(){
-        $this->belongsToMany('App\Models\User', 'recruitment_user', 'recruitment_id','user_id')->withTimestamps();
+    function users(){
+        return $this->belongsToMany('App\Models\User', 'recruitment_user', 'recruitment_id','user_id')->withTimestamps();
     }
 
-    function getTags(){
-        $this->belongsToMany('App\Models\Tags','recruitment_tag', 'recruitment_id','tag_id')->withTimestamps();
+    function tags(){
+        return $this->belongsToMany('App\Models\Tag','recruitment_tag', 'recruitment_id','tag_id')->withTimestamps();
     }
 
 }

@@ -17,71 +17,145 @@ const style = {
 
 export default function TeamCreate(props) {
 
-
-    // チーム情報
-    const [teamValues, setTeamValues] = React.useState({
+      const [nameValues,setNameValues] = useState({
         name:'',
-        nameError:false,
+        error:false,
+      })
+
+      const [descValues,setDescValues] = useState({
         desc:'',
-        descLength:0,
-        descError:false,
+        length:'',
+        error:false,
+      })
+
+      const [areaValues,setAreaValues] = useState({
         area:'',
-        areaError:false,
-        areaLength:0,
-      });
+        length:'',
+        error:false,
+      })
+
+    /**
+     * チーム名入力フォームの制御
+     * @param {*} event
+     */
+    const handleChangeNameValues = (event) => {
+        let pattern = /^.{4,20}$/;
+        if( !pattern.test(event.target.value) ){
+            setNameValues({...nameValues, name: event.target.value, error: true });
+        } else{
+            setNameValues({...nameValues, name: event.target.value, error: false });
+        }
+    };
+
+    /**
+     * チームの説明文入力フォームの制御
+     * @param {*} event
+     */
+    const handleChangeDescValues = (event) => {
+        let length = event.target.value.length;
+
+        if( length <= 300 ){
+            setDescValues({
+                ...descValues,
+                desc: event.target.value,
+                length: length,
+                error: false });
+        } else {
+            setDescValues({
+                ...descValues,
+                desc: event.target.value,
+                length: length,
+                error: true });
+        }
+    };
+
+    /**
+     * チームの活動エリア入力フォームの制御
+     * @param {*} event
+     */
+    const handleChangeAreaValues = (event) => {
+        let length = event.target.value.length;
+
+        if( length < 1 ){
+            setAreaValues({
+                ...areaValues,
+                area: event.target.value,
+                length: length,
+                error: true,});
+        } else if (length <= 100 ){
+            setAreaValues({
+                ...areaValues,
+                area: event.target.value,
+                length: length,
+                error: false,});
+        } else {
+            setAreaValues({
+                ...areaValues,
+                area: event.target.value,
+                length: length,
+                error: true,});
+        }
+    };
+
+    /**
+     * チーム名のエラーチェック関数
+     * @returns エラーがある場合false
+     */
+     const checkErrorNameValues = () => {
+        let pattern = /.{4,20}/;
+
+        if( !pattern.test(nameValues.name) ){
+            setNameValues({ ...nameValues, error: true });
+            return false;
+        } else {
+            setNameValues({...nameValues, error: false });
+            return true;
+        }
+    };
+
+    /**
+     * チーム説明のエラーチェック関数
+     * @returns エラーがある場合false
+     */
+     const checkErrorDescValues = () => {
+        let length = descValues.length;
+
+        if( length <= 300 ){
+            setDescValues({
+                ...descValues,
+                error: false });
+            return true;
+        } else {
+            setDescValues({
+                ...descValues,
+                error: true });
+            return false;
+        }
+    };
 
 
     /**
-     * 各フォームの制御
+     * 活動エリアのエラーチェック関数
+     * @returns エラーがある場合false
      */
-    const handleChangeTeamValuesName = (event) => {
-        let pattern = /^.{4,20}$/;
-        if( !pattern.test(event.target.value) ){
-            setTeamValues({...teamValues, name: event.target.value, error: true });
-        } else{
-            setTeamValues({...teamValues, name: event.target.value, error: false });
-        }
-    };
-
-    const handleChangeTeamValuesDesc = (event) => {
-        let length = event.target.value.length;
-
-        if( length < 300 ){
-            setTeamValues({
-                ...teamValues,
-                desc: event.target.value,
-                descLength: length,
-                descError: false });
-        } else {
-            setTeamValues({
-                ...teamValues,
-                desc: event.target.value,
-                descLength: length,
-                descError: true });
-        }
-    };
-
-    const handleChangeTeamValuesArea = (event) => {
-        let length = event.target.value.length;
+     const checkErrorAreaValues = () => {
+        let length = areaValues.length;
 
         if( length <= 1 ){
-            setTeamValues({
-                ...teamValues,
-                area: event.target.value,
-                areaLength: length,
-                areaError: true,});
+            setAreaValues({
+                ...areaValues,
+                error: true,});
+            return false;
         } else if (length <= 100 ){
-            setTeamValues({
-                ...teamValues,
-                area: event.target.value,
-                areaLength: length,
-                areaError: false,});
+            setAreaValues({
+                ...areaValues,
+                error: false,});
+            return true;
         } else {
-            setTeamValues({
-                ...teamValues,
-                area: event.target.value,
-                areaLength: length,
-                areaError: true,});
+            setAreaValues({
+                ...areaValues,
+                error: true,});
+            return false;
         }
     };
 
@@ -89,16 +163,25 @@ export default function TeamCreate(props) {
      * 登録ボタン制御
      */
     function handleRegister(){
+        // 登録ボタン押下時のエラー再チェック
+        let checkName = checkErrorNameValues();
+        let checkDesc = checkErrorDescValues();
+        let checkArea = checkErrorAreaValues();
+
+        if( !checkName || !checkDesc || !checkArea ){
+            return;
+        }
+
         window.axios.post('/api/team/create',{
             userId:props.authUser.id,
-            name:teamValues.name,
-            desc:teamValues.desc,
-            area:teamValues.area,
+            name:nameValues.name,
+            desc:descValues.desc,
+            area:areaValues.area,
         })
         .then(response=>{
             console.log(response.data);
             props.handleSetStatus("success");
-            window.location.href = '/team';
+            window.location.href = `/account/team`;
         })
         .catch((e)=>{
             console.log(e)
@@ -108,13 +191,10 @@ export default function TeamCreate(props) {
 
 
     return (
-        <Container maxWidth="false" disableGutters sx={{ p:4, width:'100%' ,height:'900px', backgroundImage:`url(${bg})`}} >
-
-            <Container
-                maxWidth="false"
-                disableGutters
-                sx={{p:4, position:'relative',top:'-32px',left:'-32px', width:'calc(100% + 64px)' ,height:'900px',backgroundColor:'rgba(0, 0, 0, 0.5)'}}
-            >
+        <Container
+            maxWidth="false"
+            disableGutters
+            sx={{ p:4, width:'100%' , backgroundImage:`url(${bg})`,backgroundColor:'rgba(0, 0, 0, 0.5)',backgroundBlendMode:'color'}} >
                 <Card square sx={style}>
                     <CardHeader
                         id="modal-modal-title"
@@ -128,29 +208,29 @@ export default function TeamCreate(props) {
                                 label="チーム名"
                                 name="name"
                                 required
-                                value={teamValues.name}
-                                error={teamValues.nameError}
+                                value={nameValues.name}
+                                error={nameValues.error}
                                 id="outlined-required-Email"
                                 placeholder="4文字以上20文字以下"
-                                helperText={teamValues.nameError? "4文字以上20文字以下で入力してください":null}
+                                helperText={areaValues.error? "4文字以上20文字以下で入力してください":null}
                                 sx={{width: '100%'}}
-                                onChange={handleChangeTeamValuesName}
+                                onChange={handleChangeNameValues}
                             />
                             <TextField
                                 label="チーム紹介文"
                                 name="desc"
                                 multiline
                                 rows='10'
-                                value={teamValues.desc}
-                                error={teamValues.descError}
+                                value={descValues.desc}
+                                error={descValues.error}
                                 id="outlined-required-userName"
                                 placeholder="300文字以下"
                                 helperText={
-                                    teamValues.descError
-                                        ? `${teamValues.descLength}文字です。300文字以下で入力してください。`
-                                        : `${teamValues.descLength}文字`}
+                                    descValues.error
+                                        ? `${descValues.length}文字です。300文字以下で入力してください。`
+                                        : `${descValues.length}文字`}
                                 sx={{width: '100%'}}
-                                onChange={handleChangeTeamValuesDesc}
+                                onChange={handleChangeDescValues}
                             />
                             <TextField
                                 label="活動エリア"
@@ -158,25 +238,32 @@ export default function TeamCreate(props) {
                                 required
                                 multiline
                                 rows='3'
-                                value={teamValues.area}
-                                error={teamValues.areaError}
+                                value={areaValues.area}
+                                error={areaValues.error}
                                 id="outlined-required-userName"
                                 placeholder="100文字以下"
                                 helperText={
-                                    teamValues.areaError
-                                        ? `${teamValues.areaLength}文字です。100文字以下で入力してください。`
-                                        : `${teamValues.areaLength}文字`}
+                                    areaValues.error
+                                        ? `${areaValues.length}文字です。100文字以下で入力してください。`
+                                        : `${areaValues.length}文字`}
                                 sx={{width: '100%'}}
-                                onChange={handleChangeTeamValuesArea}
+                                onChange={handleChangeAreaValues}
                             />
 
-                            <Button variant="contained" onClick={handleRegister} endIcon={<SendIcon />}>
+                            <Button
+                                variant="contained"
+                                onClick={handleRegister}
+                                endIcon={<SendIcon />}
+                                disabled={
+                                    nameValues.error ||
+                                    descValues.error ||
+                                    areaValues.error ? true : false}
+                            >
                                 新規登録
                             </Button>
                     </CardContent>
                 </Card>
             </Container>
-        </Container>
     );
 };
 

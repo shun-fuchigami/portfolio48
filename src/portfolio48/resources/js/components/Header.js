@@ -17,7 +17,6 @@ import { Link } from '@mui/material';
 import SportsSoccerIcon from '@mui/icons-material/SportsSoccer';
 import axios from 'axios';
 
-const pages = ['トップページ','募集を探す',];
 
 const Header = (props) => {
   const [anchorElNav, setAnchorElNav] = useState(null);
@@ -139,11 +138,13 @@ const Header = (props) => {
                 display: { xs: 'block', md: 'none' },
               }}
             >
-              {pages.map((page) => (
-                <MenuItem key={page} sx={{width:300}} onClick={handleCloseNavMenu } component={Link} href="/" >
-                    <Typography textAlign="center">{page}</Typography>
-                </MenuItem>
-              ))}
+            <MenuItem sx={{width:300}} onClick={handleCloseNavMenu } component={Link} href="/" >
+                <Typography textAlign="center">トップページ</Typography>
+            </MenuItem>
+
+            <MenuItem sx={{width:300}} onClick={handleCloseNavMenu } component={Link} href="/recruitment/index" >
+                <Typography textAlign="center">募集を探す</Typography>
+            </MenuItem>
             </Menu>
           </Box>
 
@@ -161,16 +162,20 @@ const Header = (props) => {
 
           {/* メニュー */}
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {pages.map((page) => (
               <Button
-                key={page}
                 onClick={handleCloseNavMenu}
                 sx={{ my: 2, color: 'white', display: 'block' }}
                 href='/'
               >
-                {page}
+                トップページ
               </Button>
-            ))}
+              <Button
+                onClick={handleCloseNavMenu}
+                sx={{ my: 2, color: 'white', display: 'block' }}
+                href='/recruitment/index'
+              >
+                募集を探す
+              </Button>
           </Box>
 
         {/* セッティングメニュー */}
@@ -210,12 +215,12 @@ const Header = (props) => {
                     component={Link} href="/register"
                     sx={{ display: props.authUser.isLogin ? "none" : "block"}}
                     >
-                  <Typography textAlign="center">新規ユーザ登録</Typography>
+                  <Typography textAlign="center">ユーザ登録</Typography>
                 </MenuItem>
 
                 <MenuItem
                     onClick={handleCloseUserMenu}
-                    component={Link} href={`/account/${props.authUser.name}`}
+                    component={Link} href={`/account?userId=${props.authUser.id}`}
                     sx={{ display: props.authUser.isLogin ? "block" : "none"}}
                     >
                   <Typography textAlign="center">アカウント</Typography>
@@ -223,10 +228,18 @@ const Header = (props) => {
 
                 <MenuItem
                     onClick={handleCloseUserMenu}
+                    component={Link} href={`/account/team`}
+                    sx={{ display: props.authUser.isLogin ? "block" : "none"}}
+                >
+                    <Typography textAlign="center">チーム確認</Typography>
+                </MenuItem>
+
+                <MenuItem
+                    onClick={handleCloseUserMenu}
                     component={Link} href="/team/create"
                     sx={{ display: props.authUser.isLogin ? "block" : "none"}}
                 >
-                    <Typography textAlign="center">チームを作る</Typography>
+                    <Typography textAlign="center">チーム作成</Typography>
                 </MenuItem>
 
                 <MenuItem

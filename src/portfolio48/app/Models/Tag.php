@@ -11,7 +11,7 @@ class Tag extends Model
 
     protected $guarded = ['id'];
 
-    function getRecruitment(){
+    function recruitment(){
         return   $this->belongsToMany('App\Models\Recruitment','recruitment_tag', 'recruitment_id', 'tag_id')->withTimestamps();
     }
 }

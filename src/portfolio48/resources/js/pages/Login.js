@@ -19,14 +19,27 @@ const style = {
 
 export default function Login(props) {
 
-    /**
-     * Email入力制御
-     */
+
     const [emailValues, setEmailValues] = React.useState({
         email:'',
         error: false
       });
 
+    const [values, setValues] = React.useState({
+        amount: '',
+        password: '',
+        weight: '',
+        weightRange: '',
+        showPassword: false,
+        error: false,
+    });
+
+
+    /**
+     * Email入力フォーム制御
+     * @param {*} prop
+     * @returns
+     */
     const handleChangeEmail = (prop) => (event) => {
         let pattern = /^[A-Za-z0-9]{1}[A-Za-z0-9_.-]*@{1}[A-Za-z0-9_.-]+.[A-Za-z0-9]+$/;
 
@@ -37,57 +50,64 @@ export default function Login(props) {
         }
     };
 
-    function checkErrorEmail(){
-        let pattern = /^[A-Za-z0-9]{1}[A-Za-z0-9_.-]*@{1}[A-Za-z0-9_.-]+.[A-Za-z0-9]+$/;
-        if( !pattern.test(emailValues.email) ){
-            setEmailValues({ ...emailValues, error:true });
-            return true;
+    /**
+     * パスワード入力フォーム制御
+     * @param {*} prop
+     * @returns
+     */
+    const handleChangePassword = (prop) => (event) => {
+        if( event.target.value.length ){
+            setValues({ ...values, [prop]: event.target.value, error:false });
         } else{
-            setEmailValues({ ...emailValues, error:false });
-            return false
+            setValues({ ...values, [prop]: event.target.value, error:true });
         }
     };
 
-        /**
-         * パスワード入力制御
-         */
-    const [values, setValues] = React.useState({
-        amount: '',
-        password: '',
-        weight: '',
-        weightRange: '',
-        showPassword: false,
-        error: false,
-    });
-
-    const handleClickShowPassword = () => {
+    /**
+     * パスワード表示ボタン制御
+     */
+     const handleClickShowPassword = () => {
         setValues({
         ...values,
         showPassword: !values.showPassword,
         });
     };
 
+    /**
+     * パスワード表示ボタン制御
+     * @param {*} event
+     */
     const handleMouseDownPassword = (event) => {
         event.preventDefault();
     };
 
-    const handleChangePassword = (prop) => (event) => {
-        let pattern = /^[a-zA-Z0-9!-/:-@¥[-`{-~]{6,12}$/;
-        if( !pattern.test(event.target.value) ){
-            setValues({ ...values, [prop]: event.target.value, error:true });
+
+    /**
+     * Emailのエラーチェック関数
+     * @returns エラーがある場合false
+     */
+    function checkErrorEmail(){
+        let pattern = /^[A-Za-z0-9]{1}[A-Za-z0-9_.-]*@{1}[A-Za-z0-9_.-]+.[A-Za-z0-9]+$/;
+        if( !pattern.test(emailValues.email) ){
+            setEmailValues({ ...emailValues, error:true });
+            return false;
         } else{
-            setValues({ ...values, [prop]: event.target.value, error:false });
+            setEmailValues({ ...emailValues, error:false });
+            return true;
         }
     };
 
+    /**
+     * パスワードのエラーチェック関数
+     * @returns エラーがある場合false
+     */
     function checkErrorPassword(){
-        let pattern = /^[a-zA-Z0-9!-/:-@¥[-`{-~]{6,12}$/;
-        if( !pattern.test(values.password) ){
-            setValues({ ...values, error : true });
-            return true;
-        } else{
-            setValues({ ...values, error : false });
+        if( !values.password.length ){
+            setValues({ ...values, error:true });
             return false;
+        } else{
+            setValues({ ...values, error:false });
+            return true;
         }
     };
 
@@ -95,36 +115,35 @@ export default function Login(props) {
      * ログイン制御
      * @returns
      */
-
     function handleLogin(){
-        let checkEmail = checkErrorEmail()
-        let checkPassword =  checkErrorPassword()
-        if ( checkEmail || checkPassword ){
+        // ログインボタン押下時のエラー再チェック
+        let checkEmail = checkErrorEmail();
+        let checkPassword =  checkErrorPassword();
+        if ( !checkEmail || !checkPassword ){
             return;
-        } else {
-            window.axios.get('/sanctum/csrf-cookie')
-            .then(response => {
-                console.log("トークン取得");
-                console.log(response);
-                window.axios.post('/api/login',{
-                    email:emailValues.email,
-                    password:values.password,
-                })
-                .then(response=>{
-                    console.log("ログイン完了");
-                    console.log(response.data);
-                    props.handleSetStatus("success");
-                    console.log(response.statusText);
-                    window.location.href = '/';
-                })
-                .catch((e)=>{
-                    console.log(e)
-                    props.handleSetStatus("error");
-                })
-            });
         }
-    }
 
+        window.axios.get('/sanctum/csrf-cookie')
+        .then(response => {
+            console.log("トークン取得");
+            console.log(response);
+            window.axios.post('/api/login',{
+                email:emailValues.email,
+                password:values.password,
+            })
+            .then(response=>{
+                console.log("ログイン完了");
+                console.log(response.data);
+                props.handleSetStatus("success");
+                console.log(response.statusText);
+                window.location.href = '/';
+            })
+            .catch((e)=>{
+                console.log(e)
+                props.handleSetStatus("error");
+            })
+        });
+    }
 
     return (
         <Container maxWidth="false" disableGutters sx={{ p:4, width:'100%' ,height:'500px', backgroundImage:`url(${bg})`}} >
@@ -158,8 +177,8 @@ export default function Login(props) {
                                 type={values.showPassword ? 'text' : 'password'}
                                 value={values.password}
                                 onChange={handleChangePassword('password')}
-                                placeholder="6文字以上12文字以下の半角英数字"
-                                helperText={values.error? "6文字以上12文字以下の半角英数字で入力してください":null}
+                                placeholder="パスワードを入力してください"
+                                helperText={values.error? "パスワードが未入力です。":null}
                                 InputProps={{
                                     endAdornment:(
                                         <InputAdornment position="end">
@@ -178,7 +197,11 @@ export default function Login(props) {
                             <Button
                                 variant="contained"
                                 onClick={handleLogin}
-                                endIcon={<SendIcon />}>
+                                endIcon={<SendIcon />}
+                                disabled={
+                                    emailValues.error || values.error ? true : false
+                                }
+                            >
                                 ログイン
                             </Button>
                     </CardContent>

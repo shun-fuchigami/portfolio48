@@ -11,12 +11,16 @@ class Team extends Model
     protected $table = 'teams';
     protected $guarded = ['id'];
 
-    function getUsers(){
+    function users(){
         return $this->belongsToMany('App\Models\User', 'team_user', 'team_id', 'user_id')->withTimestamps();
     }
 
-    function getRecruitments(){
-        return $this->belongsToMany('App\Models\Recruitment','recruitment_user', 'team_id','recruitment_id')->withTimestamps();
+    function ownerUser(){
+        return $this->belongsTo('App\Models\User','owner_id','id');
+    }
+
+    function recruitments(){
+        return $this->hasMany('App\Models\Recruitment','team_id');
     }
 
 }

@@ -42,11 +42,15 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    function getTeams(){
-        return $this->belongsToMany('App\Models\Team', 'team_user', 'user_id' ,'team_id')->withTimestamps();
+    function hasTeams(){
+        return $this -> hasMany('App\Models\Team','owner_id');
     }
 
-    function getRecruitments(){
+    function teams(){
+        return $this -> belongsToMany('App\Models\Team','team_user', 'user_id', 'team_id') -> withTimestamps();
+    }
+
+    function recruitments(){
         return $this->belongsToMany('App\Models\Recruitment','recruitment_user', 'user_id', 'recruitment_id')->withTimestamps();
     }
 

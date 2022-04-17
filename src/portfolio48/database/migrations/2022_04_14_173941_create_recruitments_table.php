@@ -15,10 +15,16 @@ class CreateRecruitmentsTable extends Migration
     {
         Schema::create('recruitments', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('team_id');
             $table->string('title');
             $table->text('desc');
             $table->boolean('invalid')->default(false);
             $table->timestamps();
+            $table
+                ->foreign('team_id')
+                ->references('id')
+                ->on('teams')
+                ->onDelete('cascade');
         });
     }
 
