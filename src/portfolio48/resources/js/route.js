@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter, Routes, Route,Link } from "react-router-dom";
+import { BrowserRouter, Routes, Route,Link, } from "react-router-dom";
 import { useInView } from 'react-intersection-observer';
-import { ThemeProvider } from '@mui/material';
+import { ThemeProvider,Box,Fade } from '@mui/material';
 import { Home } from "./pages/Home";
-import Login from './pages/Login';
-import Register from './pages/Register';
+import Login from './forms/Login';
+import Register from './forms/Register';
 import Header from "./components/Header";
 import FooterNavi from './components/FooterNavi';
 import Footer from './components/Footer';
@@ -13,14 +13,16 @@ import Copyright from './components/Copyright';
 import {theme} from './theme';
 import axios from 'axios';
 import ErrorBar from './components/ErrorBar';
+import SuccessBar from './components/SuccessBar';
 import Team from './pages/Team';
-import TeamCreate from './pages/TeamCreate';
+import TeamCreate from './forms/TeamCreate';
 import Account from './pages/Account';
 import AccountTeam from './pages/AccountTeam';
 import AccountTeamMembers from './pages/AccountTeamMembers';
-import RecruitmentCreate from './pages/RecruitmentCreate';
+import RecruitmentCreate from './forms/RecruitmentCreate';
 import RecruitmentIndex from './pages/RecruitmentIndex';
 import Recruitment from './pages/Recruitment';
+import { GUEST, ERROR, SUCCESS } from './const';
 
 function App(){
     /**
@@ -28,66 +30,75 @@ function App(){
      */
     const [ref,inView,entry] = useInView({
         threshold:0,
-        rootMargin:'0px 0px 150px 0px',
+        rootMargin:'0px 0px 100px 0px',
     })
 
     /**
      * ログインユーザ
      */
-    const [authUser,setAuthUser] = useState(()=> {
-        const initialState = initAuthUser();
-        return initialState
-    })
+    const [authUser,setAuthUser] = useState(()=>GUEST)
 
     /**
-     * ログインユーザの所属チーム
+     * ログインユーザの所属チーム・所持チーム
      */
     const [belongsTeam,setBelongsTeam] = useState([]);
     const [ownerTeam,setOwnerTeam] = useState([]);
 
     /**
-     * エラーステータス・エラーメッセージ
+     * エラーメッセージ
      */
-    const [status,setStatus] = useState({});
-    const [message,setMessage] = useState({
-        error:"エラーが発生しました。",
-        warning:"入力が誤っていないか確認してください。",
-        info:"This is an info alert — check it out!",
-        success:"実行に成功しました。",
-    });
+    const [error,setError] = useState(ERROR)
+    /**
+     * 成功時メッセージ
+     */
+    const [success,setSuccess] = useState(SUCCESS)
+
+    const [loading,setLoading] = useState(false);
 
     /**
      * ログインユーザの初期化処理
-     * @returns
      */
-    function initAuthUser(){
-        return {
-            id:0,
-            name:"guest",
-            email:"",
-            isLogin:false,
-        }
-    };
 
-    /**
-     * エラーステータスの初期化処理
-     */
-    function setInitStatus(){
-        setStatus({
-            error:false,
-            warning:false,
-            info:false,
-            success:false,
-        });
+    function setInitAuthUser(){
+        setAuthUser(GUEST);
     }
 
     /**
-     * エラーステータスのハンドリング
-     * @param {*} target
+     * エラーメッセージの初期化処理
      */
-    function handleSetStatus(target){
-        setStatus({...status, [target]:true});
-    };
+    function setInitError(){
+        setError(ERROR);
+    }
+
+    /**
+     * 成功メッセージの初期化処理
+     */
+    function setInitSuccess(){
+        setSuccess(SUCCESS);
+    }
+
+    /**
+     * メッセージのハンドリング
+     * @param {*} response
+     * @param {String} target "success" or "error"
+     */
+    function handleSetMessage(response,target){
+
+        let newMessage = [];
+
+        Object.keys(response).map(key => {
+            response[key].map(message => {
+                newMessage.push(message);
+            })
+        })
+
+        if(target === "error"){
+            setError({ show:true, messages:newMessage, });
+        } else {
+            setSuccess({ show:true, messages:newMessage, });
+        }
+    }
+
 
     /**
      * ログインユーザのAPI取得
@@ -95,22 +106,18 @@ function App(){
     function getAuthUser(){
         axios.get(`/api/user`)
             .then((response)=>{
-                console.log(response.data);
                 setAuthUser ({
-                    id:response.data.id,
-                    name:response.data.name,
-                    email:response.data.email,
+                    id:response.data[0].id,
+                    name:response.data[0].name,
+                    email:response.data[0].email,
+                    intro:response.data[0].intro,
+                    positions:response.data[0].positions,
                     isLogin:true,
                 });
             })
             .catch( e =>{
-                console.log(e);
-                setAuthUser = ({
-                    id:0,
-                    name:"guest",
-                    email:"",
-                    isLogin:false,
-                });
+                console.log(e.response);
+                setInitAuthUser();
             })
     };
 
@@ -126,7 +133,7 @@ function App(){
             setBelongsTeam(response.data);
         })
         .catch(e=>{
-            console.log(e)
+            console.log(e.response)
         })
     }
 
@@ -142,16 +149,18 @@ function App(){
             setOwnerTeam(response.data);
         })
         .catch(e=>{
-            console.log(e)
+            console.log(e.response)
         })
     }
 
     useEffect(()=>{
-        getAuthUser();
-        setInitStatus();
+        // getAuthUser();
+        setInitError();
+        setInitSuccess();
     },[]);
 
     useEffect(()=>{
+        getAuthUser();
         getBelongsTeam();
         getOwnerTeam();
     },[authUser.id])
@@ -159,29 +168,30 @@ function App(){
     return(
         <ThemeProvider theme={theme}>
             {/* ヘッダーナビ */}
-            <Header authUser={authUser}  handleSetStatus={handleSetStatus}/>
+            <Header authUser={authUser}  handleSetMessage={handleSetMessage}/>
 
-            <ErrorBar status={status} setInitStatus={setInitStatus} message={message}/>
+            <ErrorBar error={error} setError={setError}/>
+            <SuccessBar success={success} setSuccess={setSuccess}/>
 
             {/* ルーティング */}
             <Routes>
 
                 <Route path="/" element={
-                     <Home authUser={authUser}  handleSetStatus={handleSetStatus} /> } />
+                     <Home authUser={authUser}  handleSetMessage={handleSetMessage} /> } />
 
                 <Route path="/login" element={
-                     <Login authUser={authUser}  handleSetStatus={handleSetStatus} /> } />
+                     <Login authUser={authUser}  handleSetMessage={handleSetMessage} /> } />
 
                 <Route path="/register" element={
-                     <Register authUser={authUser}  handleSetStatus={handleSetStatus} /> } />
+                     <Register authUser={authUser}  handleSetMessage={handleSetMessage} /> } />
 
                 <Route path="/account" element={
-                     <Account authUser={authUser}  handleSetStatus={handleSetStatus} /> } />
+                     <Account authUser={authUser}  handleSetMessage={handleSetMessage} /> } />
 
                 <Route path="/account/team" element={
                     <AccountTeam
                         authUser={authUser}
-                        handleSetStatus={handleSetStatus}
+                        handleSetMessage={handleSetMessage}
                         belongsTeam={belongsTeam}
                         ownerTeam={ownerTeam}
                         getBelongsTeam={getBelongsTeam}
@@ -190,19 +200,19 @@ function App(){
                 <Route path="/team/members" element={
                     <AccountTeamMembers
                         authUser={authUser}
-                        handleSetStatus={handleSetStatus}
+                        handleSetMessage={handleSetMessage}
                         belongsTeam={belongsTeam}
                         ownerTeam={ownerTeam}
                         getBelongsTeam={getBelongsTeam}
                         getOwnerTeam={getOwnerTeam}/> }/>
 
                 <Route path="/team/create" element={
-                     <TeamCreate authUser={authUser}  handleSetStatus={handleSetStatus}  /> } />
+                     <TeamCreate authUser={authUser}  handleSetMessage={handleSetMessage}  /> } />
 
                 <Route path="/team" element={
                     <Team
                         authUser={authUser}
-                        handleSetStatus={handleSetStatus}
+                        handleSetMessage={handleSetMessage}
                         belongsTeam={belongsTeam}
                         ownerTeam={ownerTeam}
                         getBelongsTeam={getBelongsTeam}
@@ -211,7 +221,7 @@ function App(){
                 <Route path="/recruitment/index" element={
                      <RecruitmentIndex
                         authUser={authUser}
-                        handleSetStatus={handleSetStatus}
+                        handleSetMessage={handleSetMessage}
                         belongsTeam={belongsTeam}
                         ownerTeam={ownerTeam}
                         getBelongsTeam={getBelongsTeam}
@@ -220,7 +230,7 @@ function App(){
                 <Route path="/recruitment/create" element={
                      <RecruitmentCreate
                         authUser={authUser}
-                        handleSetStatus={handleSetStatus}
+                        handleSetMessage={handleSetMessage}
                         belongsTeam={belongsTeam}
                         ownerTeam={ownerTeam}
                         getBelongsTeam={getBelongsTeam}
@@ -229,23 +239,23 @@ function App(){
                 <Route path="/recruitment" element={
                      <Recruitment
                         authUser={authUser}
-                        handleSetStatus={handleSetStatus}
+                        handleSetMessage={handleSetMessage}
                         belongsTeam={belongsTeam}
                         ownerTeam={ownerTeam}
                         getBelongsTeam={getBelongsTeam}
                         getOwnerTeam={getOwnerTeam}/> }/>
 
                 <Route element={
-                     <Home authUser={authUser}  handleSetStatus={handleSetStatus} /> } />
+                     <Home authUser={authUser}  handleSetMessage={handleSetMessage} /> } />
 
             </Routes>
 
             {/* 追従ナビ */}
-            <FooterNavi inView={inView}/>
+                    <FooterNavi inView={inView}/>
 
             <div ref={ref}>
                 {/* フッター */}
-                <Footer authUser={authUser} handleSetStatus={handleSetStatus}/>
+                <Footer authUser={authUser} handleSetMessage={handleSetMessage}/>
 
                 {/* コピーライト */}
                 <Copyright/>

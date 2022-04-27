@@ -1,49 +1,86 @@
 import * as React from 'react';
-import Typography from '@mui/material/Typography';
-import { Container,Button } from '@mui/material';
-import { Link } from '@mui/material';
+import { Container,Button,Fade } from '@mui/material';
 import HomeIcon from '@mui/icons-material/Home';
 import ArrowCircleUpIcon from '@mui/icons-material/ArrowCircleUp';
+
+const styles = {bgcolor:'rgba(255,255,255,0.7)'};
+const buttons = [
+    {title:"トップページ",  href:"/", onClick:null, icon:<HomeIcon />},
+    {title:"上へ戻る",  href:null,
+        onClick:(e)=>{ e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }, icon:<ArrowCircleUpIcon />},
+]
+
+const followStyle = {
+    display:'flex',
+    position:'relative',
+    justifyContent:'center',
+    alignItems:'center',
+    mt:2,
+    gap:2,
+    p:0,
+    width:'max-content'
+}
+
+const fixedStyle ={
+    display:'flex',
+    position:'fixed',
+    justifyContent:'center',
+    alignItems:'center',
+    bottom: 50,
+    right:0,
+    left:0,
+    gap:2,
+    p:0,
+    width:'max-content'
+}
 
 export default function FooterNavi(props) {
 
     return (
-            <Container
-            sx={ !props.inView ?
-                {   display:'flex',
-                    position:'fixed',
-                    justifyContent:'center',
-                    alignItems:'center',
-                    bottom: 50,
-                    right:0,
-                    left:0,
-                    gap:2,
-                    p:0,
-                    width:'max-content'}
-                :
-                {   display:'flex',
-                    position:'relative',
-                    justifyContent:'center',
-                    alignItems:'center',
-                    mt:2,
-                    gap:2,
-                    p:0,
-                    width:'max-content'}
-                }
-            >
-                    <Button variant="text" href="/" startIcon={<HomeIcon />} sx={{bgcolor:'rgba(255,255,255,0.7)'}}>
-                        トップページ
-                    </Button>
-                    <Button
-                        variant="text"
-                        startIcon={<ArrowCircleUpIcon />}
-                        sx={{bgcolor:'rgba(255,255,255,0.7)'}}
-                        onClick={(e)=>{
-                            e.preventDefault();
-                            window.scrollTo({ top: 0, behavior: 'smooth' });
-                        }}>
-                        上へ戻る
-                    </Button>
-            </Container>
+
+        <nav>
+            <Fade in={ props.inView } >
+                <Container sx={ followStyle }>
+                    {
+                        buttons.map((button,index)=>{
+                            return(
+                                <Button
+                                    key={index}
+                                    variant='text'
+                                    href={button.href}
+                                    startIcon={button.icon}
+                                    sx={styles}
+                                    onClick={button.onClick}
+                                    >
+                                    {button.title}
+                                </Button>
+                            );
+                        })
+                    }
+                </Container>
+            </Fade>
+
+            <Fade in={ !props.inView } >
+                <Container sx={ fixedStyle }>
+                    {
+                        buttons.map((button,index)=>{
+                            return(
+                                <Button
+                                    key={index}
+                                    variant='text'
+                                    href={button.href}
+                                    startIcon={button.icon}
+                                    sx={styles}
+                                    onClick={button.onClick}
+                                    >
+                                    {button.title}
+                                </Button>
+                            );
+                        })
+                    }
+                </Container>
+            </Fade>
+        </nav>
+
     );
 }

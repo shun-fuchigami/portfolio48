@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'intro',
     ];
 
     /**
@@ -48,6 +49,10 @@ class User extends Authenticatable
 
     function teams(){
         return $this -> belongsToMany('App\Models\Team','team_user', 'user_id', 'team_id') -> withTimestamps();
+    }
+
+    function positions(){
+        return $this -> belongsToMany('App\Models\Position','position_user', 'user_id', 'position_id') -> withTimestamps();
     }
 
     function recruitments(){

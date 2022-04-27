@@ -1,6 +1,6 @@
 export function textNewLine(text){
     return text.split('\n').map( (t,index) =>{
-        return ( <p key={index}>{t}</p>)
+        return ( <span key={index}> {t} <br/> </span>)
     })
 }
 

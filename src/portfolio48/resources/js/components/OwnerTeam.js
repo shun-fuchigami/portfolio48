@@ -6,6 +6,19 @@ import { textNewLine } from '../util';
 
 export default function OwnerTeam(props){
 
+    const listItems = [
+        {title:"チーム名", content:'name', newLine:false },
+        {title:"紹介文", content:'desc', newLine:true},
+        {title:"活動エリア", content:'area', newLine:true},
+    ]
+    const buttons = [
+        {title:'チームメンバの確認',href:'/team/members?teamId=',},
+        {title:'チームの詳細確認',href:'/team?teamId=',},
+        {title:'メンバ募集作成',href:'/recruitment/create?teamId='},
+    ]
+
+
+
     return(
         <Card elevation={0} sx={{mt:5}}>
         <CardHeader title={`${props.authUser.name}がオーナーのチーム一覧`}  />
@@ -16,33 +29,32 @@ export default function OwnerTeam(props){
                     <Card key={index} sx={{p:2,m:2}} variant="outlined" >
                         <CardContent>
                             <List>
-                                <ListItem>
-                                    <ListItemText primary="チーム名" secondary={team.name} />
-                                </ListItem>
-                                <ListItem>
-                                    <ListItemText primary="紹介文" secondary={textNewLine(team.desc)} />
-                                </ListItem>
-                                <ListItem>
-                                    <ListItemText primary="活動エリア" secondary={textNewLine(team.area)} />
-                                </ListItem>
+                                {
+                                    listItems.map(listItem=>{
+                                        return(
+                                        <ListItem>
+                                            <ListItemText
+                                                primary={listItem.title}
+                                                secondary={listItem.newLine ? textNewLine(team[listItem.content]) : team[listItem.content]}
+                                            />
+                                        </ListItem>
+                                        );
+                                    })
+                                }
                             </List>
                         </CardContent>
                         <CardActions sx={{pb:0, justifyContent:'end'}}>
-                            <Button size="small" color="primary" href={`/team/members?teamId=${team.id}`}>
-                                <Typography>
-                                    チームメンバの確認
-                                </Typography>
-                            </Button>
-                            <Button size="small" color="primary" href={`/team?teamId=${team.id}`}>
-                                <Typography>
-                                    チームの詳細確認
-                                </Typography>
-                            </Button>
-                            <Button size="small" color="primary" href={`/recruitment/create?teamId=${team.id}`}>
-                                <Typography>
-                                    メンバ募集作成
-                                </Typography>
-                            </Button>
+                            {
+                                buttons.map((button)=>{
+                                    return(
+                                        <Button size="small" color="primary" href={button.href + team.id}>
+                                            <Typography variant='caption'>
+                                                {button.title}
+                                            </Typography>
+                                        </Button>
+                                    );
+                                })
+                            }
                         </CardActions>
                     </Card>
                 );
@@ -58,7 +70,7 @@ export default function OwnerTeam(props){
                 </CardContent>
                 <CardActions sx={{pb:0, justifyContent:'end'}}>
                     <Button size="small" color="primary" href="/team/create">
-                        <Typography>
+                        <Typography variant='caption'>
                             チーム作成
                         </Typography>
                     </Button>

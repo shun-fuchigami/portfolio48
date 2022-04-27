@@ -1,75 +1,33 @@
-import React, { useEffect, useState } from 'react';
-import ReactDOM from 'react-dom';
-import { Collapse,Alert } from '@mui/material';
-import { getThemeProps } from '@mui/system';
+import { Fade,Alert,List,ListItem } from '@mui/material';
+
+const styles={
+    position: 'fixed',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    zIndex:1,
+}
 
 export default function ErrorBar(props){
 
     return (
         <nav>
-
-        <Collapse in={props.status.error} >
-            <Alert
-                sx={{
-                    position: 'fixed',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    zIndex:1,
-                }}
-                onClose={() => {props.setInitStatus()}}
-                severity="error"
-            >
-                {props.message.error}
-            </Alert>
-        </Collapse>
-
-        <Collapse in={props.status.warning} >
-            <Alert
-                sx={{
-                    position: 'fixed',
-                    top: '80px',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    zIndex:1,
-                }}
-                onClose={() => {props.setInitStatus()}}
-                severity="warning"
-            >
-                {props.message.warning}
-            </Alert>
-        </Collapse>
-
-        <Collapse in={props.status.info} >
-            <Alert
-                sx={{
-                    position: 'fixed',
-                    top: '80px',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    zIndex:1,
-                }}
-                onClose={() => {props.setInitStatus()}}
-                severity="info"
-            >
-                {props.message.info}
-            </Alert>
-        </Collapse>
-
-        <Collapse in={props.status.success} >
-            <Alert
-                sx={{
-                    position: 'fixed',
-                    top: '80px',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    zIndex:1,
-                }}
-                onClose={() => {props.setInitStatus()}}
-                severity="success"
-            >
-                {props.message.success}
-            </Alert>
-        </Collapse>
+            <Fade in={props.error.show} >
+                <Alert
+                    sx={styles}
+                    onClose={() => { props.setError({...props.error,show:false}) }}
+                    severity="error"
+                >
+                    <List>
+                    {
+                        props.error.messages.map((message,index)=>{
+                            return(
+                                    <ListItem key={index}>{message}</ListItem>
+                                    );
+                                })
+                    }
+                    </List>
+                </Alert>
+            </Fade>
         </nav>
     );
 }

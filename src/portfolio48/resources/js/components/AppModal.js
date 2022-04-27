@@ -1,7 +1,0 @@
-
-
-
-function AppModal(props){
-    
-
-}
