@@ -40,16 +40,21 @@ class LoginController extends Controller
 
     }
 
-
     /**
-     * ログアウト
+     * Log the user out of the application.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response|\Illuminate\Http\JsonResponse
      */
     public function logout(Request $request)
     {
-        Auth::logout();
-        return response()->json(['message'=>'ログアウトが完了しました。'], Response::HTTP_OK);
+        $this->guard()->logout();
+
+        $request->session()->invalidate();
+
+        $request->session()->regenerateToken();
+
+        return response()->json(['message'=>['ログアウトが完了しました']], Response::HTTP_OK);
     }
+
 }

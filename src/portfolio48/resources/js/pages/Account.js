@@ -1,21 +1,24 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import AccountRead from '../components/AccountRead';
 import AccountUpdate from '../forms/AccountUpdate';
-import { Container,Card,Avatar,Typography,CardHeader,CardContent,List,ListItem,ListItemText,CardActions,Button,Box,Chip } from '@mui/material';
-
+import PasswordUpdate from '../forms/PasswordUpdate';
+import { Container, } from '@mui/material';
 
 
 export default function Account(props){
 
-    const [updateFlag, setUpdateFlag] = useState(false);
+    const [updateType, setUpdateType] = useState(null);
+
 
     return(
-            <Container maxWidth='md'>
-                {
-                    updateFlag ?
-                        <AccountUpdate authUser={props.authUser} handleSetMessage={props.handleSetMessage} setUpdateFlag={setUpdateFlag} />
-                        : <AccountRead authUser={props.authUser} handleSetMessage={props.handleSetMessage} setUpdateFlag={setUpdateFlag} />
-                }
-            </Container>
+        <Container maxWidth='md'>
+            {
+                !updateType ?
+                    <AccountRead authUser={props.authUser} handleSetMessage={props.handleSetMessage} setUpdateType={setUpdateType} />
+                    :updateType==="user" ?
+                        <AccountUpdate authUser={props.authUser} handleSetMessage={props.handleSetMessage} setUpdateType={setUpdateType} />
+                        :<PasswordUpdate authUser={props.authUser} handleSetMessage={props.handleSetMessage} setUpdateType={setUpdateType} />
+            }
+        </Container>
     );
 }

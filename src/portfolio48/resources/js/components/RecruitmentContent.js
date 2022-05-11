@@ -17,6 +17,7 @@ export function RecruitmentContent(props){
         {title:"タグ", content:null, teams:false, newLine:false, box:'tags'},
     ]
 
+    
 
     return (
         props.recruitments.length ?

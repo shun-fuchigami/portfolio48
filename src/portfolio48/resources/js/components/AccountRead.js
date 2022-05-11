@@ -5,8 +5,8 @@ import { Container,Card,Avatar,Typography,CardHeader,CardContent,List,ListItem,L
 
 export default function AccountRead(props){
     const buttons = [
-        {title:'パスワード変更',href:null, onClick:()=>{props.setUpdateFlag(true)} },
-        {title:'登録情報変更',href:null, onClick:()=>{props.setUpdateFlag(true)}},
+        {title:'パスワード変更',href:null, onClick:()=>{props.setUpdateType("password")} },
+        {title:'登録情報変更',href:null, onClick:()=>{props.setUpdateType("user")}},
         {title:'所属チーム確認',href:'/account/team'},
     ]
 

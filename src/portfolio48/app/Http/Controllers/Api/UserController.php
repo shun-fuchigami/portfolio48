@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Models\Team;
 use App\Models\Position;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -75,6 +76,38 @@ class UserController extends Controller
         $user -> positions() -> sync($positionIds);
         return response()->json(['message'=>['ユーザ情報更新が完了しました。']], Response::HTTP_OK);
 
+    }
+
+    /**
+     * ユーザのパスワード変更API
+     */
+    public function updatePassword(Request $request){
+        $validator = Validator::make($request->all(),[
+            'id' => 'required|exists:users',
+            'prevPassword' => 'required|current_password:web',
+            'password' => 'required|confirmed',
+        ]);
+
+        /**
+         * Id,入力値チェック
+         */
+        if ($validator->fails()) {
+            return response()->json($validator->messages(), Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        $user = User::find($request->id);
+
+        /**
+         * passwordに変更があるかチェック
+         */
+        if( $request->password === $user->password){
+            return response()->json(['message' => ['変更前と変更後のパスワードが同じです。']], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        $user -> password = Hash::make($request->password);
+        $user->save();
+
+        return response()->json(['message'=>['パスワード更新が完了しました。']], Response::HTTP_OK);
     }
 
 

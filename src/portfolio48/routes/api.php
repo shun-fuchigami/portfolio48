@@ -29,6 +29,7 @@ Route::group(['middleware'=>'auth:sanctum'],function(){
     Route::get('/user/belongs', 'App\Http\Controllers\Api\UserController@getBelongsTeam' );
     Route::get('/user/owner', 'App\Http\Controllers\Api\UserController@getOwnerTeam' );
     Route::post('/user/update', 'App\Http\Controllers\Api\UserController@updateUser' );
+    Route::post('/user/password/update', 'App\Http\Controllers\Api\UserController@updatePassword' );
 
     //チーム関連API
     Route::post('/team/create', 'App\Http\Controllers\Api\TeamController@create' );
@@ -40,8 +41,8 @@ Route::group(['middleware'=>'auth:sanctum'],function(){
     //募集関連API
     Route::post('/recruitment/create', 'App\Http\Controllers\Api\RecruitmentController@create' );
     Route::post('/recruitment/app', 'App\Http\Controllers\Api\RecruitmentController@app' );
-    Route::post('/recruitment/app/consent', 'App\Http\Controllers\Api\RecruitmentController@consent' );
     Route::post('/recruitment/app/deny', 'App\Http\Controllers\Api\RecruitmentController@deny' );
+    Route::post('/recruitment/app/consent', 'App\Http\Controllers\Api\RecruitmentController@consent' );
 });
 
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

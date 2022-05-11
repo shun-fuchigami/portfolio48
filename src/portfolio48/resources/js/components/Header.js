@@ -97,14 +97,16 @@ const Header = (props) => {
 
   function handleLogout(){
       axios.post('/api/logout')
-      .then((response=>{
-          console.log('ログアウト');
-          props.handleSetMessage(response.data,"success");
-          window.location.href = '/';
-      }))
-      .catch((e)=>{
-        console.log(e.response)
-      })
+        .then( response => {
+            console.log('ログアウト');
+            props.handleSetMessage(response.data,"success");
+            // window.location.href = '/';
+        })
+        .catch( e => {
+            console.log(e.response)
+            props.handleSetMessage(e.response.data,"error");
+            // window.location.href = '/';
+        })
   }
 
 

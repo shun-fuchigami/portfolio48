@@ -32881,13 +32881,13 @@ function AccountRead(props) {
     title: 'パスワード変更',
     href: null,
     onClick: function onClick() {
-      props.setUpdateFlag(true);
+      props.setUpdateType("password");
     }
   }, {
     title: '登録情報変更',
     href: null,
     onClick: function onClick() {
-      props.setUpdateFlag(true);
+      props.setUpdateType("user");
     }
   }, {
     title: '所属チーム確認',
@@ -33867,10 +33867,10 @@ var Header = function Header(props) {
   function handleLogout() {
     axios__WEBPACK_IMPORTED_MODULE_2___default().post('/api/logout').then(function (response) {
       console.log('ログアウト');
-      props.handleSetMessage(response.data, "success");
-      window.location.href = '/';
+      props.handleSetMessage(response.data, "success"); // window.location.href = '/';
     })["catch"](function (e) {
       console.log(e.response);
+      props.handleSetMessage(e.response.data, "error"); // window.location.href = '/';
     });
   }
   /**
@@ -35189,7 +35189,7 @@ function AccountUpdate(props) {
                 ml: 1
               },
               onClick: function onClick() {
-                props.setUpdateFlag(false);
+                props.setUpdateType(null);
               },
               endIcon: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(_mui_icons_material_Cancel__WEBPACK_IMPORTED_MODULE_23__["default"], {}),
               children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(_mui_material__WEBPACK_IMPORTED_MODULE_22__["default"], {
@@ -35489,6 +35489,375 @@ function Login(props) {
   });
 }
 ;
+
+/***/ }),
+
+/***/ "./resources/js/forms/PasswordUpdate.js":
+/*!**********************************************!*\
+  !*** ./resources/js/forms/PasswordUpdate.js ***!
+  \**********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ PasswordUpdate)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/Card/Card.js");
+/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/CardHeader/CardHeader.js");
+/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/CardContent/CardContent.js");
+/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/TextField/TextField.js");
+/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/InputAdornment/InputAdornment.js");
+/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/IconButton/IconButton.js");
+/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/CardActions/CardActions.js");
+/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/Button/Button.js");
+/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/Typography/Typography.js");
+/* harmony import */ var _mui_icons_material_Visibility__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @mui/icons-material/Visibility */ "./node_modules/@mui/icons-material/Visibility.js");
+/* harmony import */ var _mui_icons_material_VisibilityOff__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @mui/icons-material/VisibilityOff */ "./node_modules/@mui/icons-material/VisibilityOff.js");
+/* harmony import */ var _mui_icons_material_Update__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @mui/icons-material/Update */ "./node_modules/@mui/icons-material/Update.js");
+/* harmony import */ var _mui_icons_material_Cancel__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! @mui/icons-material/Cancel */ "./node_modules/@mui/icons-material/Cancel.js");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]; if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+
+
+
+
+
+
+/**
+ * フォームスタイル
+ */
+
+
+
+var formStyle = {
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'start',
+  justifyContent: 'center',
+  gap: '16px'
+};
+/**
+ * チェック対象
+ */
+
+var checkList = ['prevPassword', 'password', 'confirmPassword'];
+function PasswordUpdate(props) {
+  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)({
+    prevPassword: "",
+    password: "",
+    confirmPassword: "",
+    error: {
+      prevPassword: false,
+      password: false,
+      confirmPassword: false
+    },
+    length: {
+      prevPassword: 0,
+      password: 0,
+      confirmPassword: 0
+    },
+    pattern: {
+      prevPassword: /^.{1,}$/,
+      password: /^[a-zA-Z0-9!-/:-@¥[-`{-~]{6,12}$/,
+      confirmPassword: null
+    },
+    show: {
+      prevPassword: false,
+      password: false,
+      confirmPassword: false
+    }
+  }),
+      _useState2 = _slicedToArray(_useState, 2),
+      values = _useState2[0],
+      setValues = _useState2[1];
+  /**
+   * フォームのハンドル
+   * @param {*} prop 変更対象
+   * @returns
+   */
+
+
+  var handleChange = function handleChange(prop) {
+    return function (event) {
+      var setValue;
+      var checkValue = event.target.value;
+      setValue = _objectSpread(_objectSpread({}, values), {}, _defineProperty({}, prop, event.target.value));
+      setValues(setValue);
+
+      if (prop === 'password') {
+        checkError(prop, checkError('confirmPassword', setValue), checkValue);
+      } else {
+        checkError(prop, setValue, checkValue);
+      }
+    };
+  };
+  /**
+   * エラーチェック
+   * @param {*} prop チェック対象
+   * @param {*} prevValue チェック対象外のstate
+   * @param {*} checkValue チェック対象の値
+   */
+
+
+  function checkError(prop) {
+    var prevValue = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : values;
+    var checkValue = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : values[prop];
+    var setValue;
+
+    if (prop === 'confirmPassword') {
+      if (checkValue !== prevValue.password) {
+        setValues(_objectSpread(_objectSpread({}, prevValue), {}, {
+          error: _objectSpread(_objectSpread({}, prevValue.error), {}, _defineProperty({}, prop, true))
+        }));
+        setValue = _objectSpread(_objectSpread({}, prevValue), {}, {
+          error: _objectSpread(_objectSpread({}, prevValue.error), {}, _defineProperty({}, prop, true))
+        });
+      } else {
+        setValues(_objectSpread(_objectSpread({}, prevValue), {}, {
+          error: _objectSpread(_objectSpread({}, prevValue.error), {}, _defineProperty({}, prop, false))
+        }));
+        setValue = _objectSpread(_objectSpread({}, prevValue), {}, {
+          error: _objectSpread(_objectSpread({}, prevValue.error), {}, _defineProperty({}, prop, false))
+        });
+      }
+    } else {
+      if (!values.pattern[prop].test(checkValue)) {
+        setValues(_objectSpread(_objectSpread({}, prevValue), {}, {
+          error: _objectSpread(_objectSpread({}, prevValue.error), {}, _defineProperty({}, prop, true))
+        }));
+        setValue = _objectSpread(_objectSpread({}, prevValue), {}, {
+          error: _objectSpread(_objectSpread({}, prevValue.error), {}, _defineProperty({}, prop, true))
+        });
+      } else {
+        setValues(_objectSpread(_objectSpread({}, prevValue), {}, {
+          error: _objectSpread(_objectSpread({}, prevValue.error), {}, _defineProperty({}, prop, false))
+        }));
+        setValue = _objectSpread(_objectSpread({}, prevValue), {}, {
+          error: _objectSpread(_objectSpread({}, prevValue.error), {}, _defineProperty({}, prop, false))
+        });
+      }
+    }
+
+    return setValue;
+  }
+
+  ;
+  /**
+   * エラーチェックを全て実行
+   * @returns エラーがある場合true
+   */
+
+  function allCheckError() {
+    var checkResult;
+    var checkResults = [];
+    checkList.forEach(function (c, index) {
+      if (index === 0) {
+        checkResult = checkError(c);
+      } else {
+        checkResult = checkError(c, checkResult);
+      }
+
+      checkResults.push(checkResult.error[c]);
+    });
+
+    if (checkResults.includes(true)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  /**
+   * パスワード表示ボタン制御
+   */
+
+
+  var handleClickShow = function handleClickShow(prop) {
+    return function (event) {
+      setValues(_objectSpread(_objectSpread({}, values), {}, {
+        show: _objectSpread(_objectSpread({}, values.show), {}, _defineProperty({}, prop, !values.show[prop]))
+      }));
+    };
+  };
+  /**
+   * パスワード表示ボタン制御
+   * @param {*} event
+   */
+
+
+  var handleMouseDown = function handleMouseDown(event) {
+    event.preventDefault();
+  };
+  /**
+   * 登録ボタン制御
+   */
+
+
+  var handleRegister = function handleRegister(e) {
+    e.preventDefault();
+
+    if (allCheckError() === true) {
+      return;
+    }
+
+    window.axios.post('/api/user/password/update', {
+      id: props.authUser.id,
+      prevPassword: values.prevPassword,
+      password: values.password,
+      password_confirmation: values.confirmPassword
+    }).then(function (response) {
+      props.handleSetMessage(response.data, "success");
+      props.setUpdateType(null);
+    })["catch"](function (e) {
+      console.log(e.response);
+      props.handleSetMessage(e.response.data, "error");
+    });
+  };
+
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)(_mui_material__WEBPACK_IMPORTED_MODULE_2__["default"], {
+    elevation: 0,
+    sx: {
+      mt: 5
+    },
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(_mui_material__WEBPACK_IMPORTED_MODULE_3__["default"], {
+      title: "".concat(props.authUser.name, "\u306E\u30A2\u30AB\u30A6\u30F3\u30C8\u30DA\u30FC\u30B8")
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(_mui_material__WEBPACK_IMPORTED_MODULE_2__["default"], {
+      sx: {
+        p: 2,
+        m: 2
+      },
+      variant: "outlined",
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(_mui_material__WEBPACK_IMPORTED_MODULE_4__["default"], {
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("form", {
+          onSubmit: handleRegister,
+          style: formStyle,
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(_mui_material__WEBPACK_IMPORTED_MODULE_5__["default"], {
+            label: "\u5909\u66F4\u524D\u30D1\u30B9\u30EF\u30FC\u30C9",
+            name: "prevPassword",
+            required: true,
+            sx: {
+              width: '28ch'
+            },
+            error: values.error.prevPassword,
+            type: values.show.prevPassword ? 'text' : 'password',
+            value: values.prevPassword,
+            onChange: handleChange('prevPassword'),
+            placeholder: "\u5909\u66F4\u524D\u306E\u30D1\u30B9\u30EF\u30FC\u30C9\u3092\u5165\u529B\u3057\u3066\u304F\u3060\u3055\u3044\u3002",
+            helperText: values.error.prevPassword ? "変更前のパスワードを入力してください。" : null,
+            InputProps: {
+              endAdornment: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(_mui_material__WEBPACK_IMPORTED_MODULE_6__["default"], {
+                position: "end",
+                children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"], {
+                  "aria-label": "toggle prevPassword visibility",
+                  onClick: handleClickShow('prevPassword'),
+                  onMouseDown: handleMouseDown,
+                  edge: "end",
+                  children: values.show.prevPassword ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(_mui_icons_material_VisibilityOff__WEBPACK_IMPORTED_MODULE_8__["default"], {}) : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(_mui_icons_material_Visibility__WEBPACK_IMPORTED_MODULE_9__["default"], {})
+                })
+              })
+            }
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(_mui_material__WEBPACK_IMPORTED_MODULE_5__["default"], {
+            label: "\u5909\u66F4\u5F8C\u30D1\u30B9\u30EF\u30FC\u30C9",
+            name: "password",
+            required: true,
+            sx: {
+              width: '28ch'
+            },
+            error: values.error.password,
+            type: values.show.password ? 'text' : 'password',
+            value: values.password,
+            onChange: handleChange('password'),
+            placeholder: "6\u6587\u5B57\u4EE5\u4E0A12\u6587\u5B57\u4EE5\u4E0B\u306E\u534A\u89D2\u82F1\u6570\u5B57",
+            helperText: values.error.password ? "6文字以上12文字以下の半角英数字で入力してください" : null,
+            InputProps: {
+              endAdornment: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(_mui_material__WEBPACK_IMPORTED_MODULE_6__["default"], {
+                position: "end",
+                children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"], {
+                  "aria-label": "toggle password visibility",
+                  onClick: handleClickShow('password'),
+                  onMouseDown: handleMouseDown,
+                  edge: "end",
+                  children: values.show.password ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(_mui_icons_material_VisibilityOff__WEBPACK_IMPORTED_MODULE_8__["default"], {}) : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(_mui_icons_material_Visibility__WEBPACK_IMPORTED_MODULE_9__["default"], {})
+                })
+              })
+            }
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(_mui_material__WEBPACK_IMPORTED_MODULE_5__["default"], {
+            label: "\u30D1\u30B9\u30EF\u30FC\u30C9\u306E\u518D\u78BA\u8A8D",
+            name: "password_confirmation",
+            required: true,
+            sx: {
+              width: '28ch'
+            },
+            error: values.error.confirmPassword,
+            type: values.show.confirmPassword ? 'text' : 'password',
+            value: values.confirmPassword,
+            onChange: handleChange('confirmPassword'),
+            placeholder: "\u518D\u5EA6\u30D1\u30B9\u30EF\u30FC\u30C9\u3092\u5165\u529B\u3057\u3066\u304F\u3060\u3055\u3044",
+            helperText: values.error.confirmPassword ? "パスワードが異なります。" : null,
+            InputProps: {
+              endAdornment: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(_mui_material__WEBPACK_IMPORTED_MODULE_6__["default"], {
+                position: "end",
+                children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(_mui_material__WEBPACK_IMPORTED_MODULE_7__["default"], {
+                  "aria-label": "toggle password visibility",
+                  onClick: handleClickShow('confirmPassword'),
+                  onMouseDown: handleMouseDown,
+                  edge: "end",
+                  children: values.show.confirmPassword ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(_mui_icons_material_VisibilityOff__WEBPACK_IMPORTED_MODULE_8__["default"], {}) : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(_mui_icons_material_Visibility__WEBPACK_IMPORTED_MODULE_9__["default"], {})
+                })
+              })
+            }
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)(_mui_material__WEBPACK_IMPORTED_MODULE_10__["default"], {
+            sx: {
+              pb: 0,
+              alignSelf: 'end'
+            },
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(_mui_material__WEBPACK_IMPORTED_MODULE_11__["default"], {
+              variant: "contained",
+              type: "submit",
+              endIcon: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(_mui_icons_material_Update__WEBPACK_IMPORTED_MODULE_12__["default"], {}),
+              disabled: values.error.prevPassword || values.error.password || values.error.confirmPassword ? true : false,
+              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(_mui_material__WEBPACK_IMPORTED_MODULE_13__["default"], {
+                variant: "caption",
+                children: "\u5909\u66F4"
+              })
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(_mui_material__WEBPACK_IMPORTED_MODULE_11__["default"], {
+              variant: "outlined",
+              sx: {
+                ml: 1
+              },
+              onClick: function onClick() {
+                props.setUpdateType(null);
+              },
+              endIcon: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(_mui_icons_material_Cancel__WEBPACK_IMPORTED_MODULE_14__["default"], {}),
+              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(_mui_material__WEBPACK_IMPORTED_MODULE_13__["default"], {
+                variant: "caption",
+                children: "\u30AD\u30E3\u30F3\u30BB\u30EB"
+              })
+            })]
+          })]
+        })
+      })
+    })]
+  });
+}
 
 /***/ }),
 
@@ -36663,8 +37032,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var _components_AccountRead__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../components/AccountRead */ "./resources/js/components/AccountRead.js");
 /* harmony import */ var _forms_AccountUpdate__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../forms/AccountUpdate */ "./resources/js/forms/AccountUpdate.js");
-/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/Container/Container.js");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+/* harmony import */ var _forms_PasswordUpdate__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../forms/PasswordUpdate */ "./resources/js/forms/PasswordUpdate.js");
+/* harmony import */ var _mui_material__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @mui/material */ "./node_modules/@mui/material/Container/Container.js");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -36682,22 +37052,27 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 
 
-function Account(props) {
-  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),
-      _useState2 = _slicedToArray(_useState, 2),
-      updateFlag = _useState2[0],
-      setUpdateFlag = _useState2[1];
 
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_mui_material__WEBPACK_IMPORTED_MODULE_4__["default"], {
+function Account(props) {
+  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null),
+      _useState2 = _slicedToArray(_useState, 2),
+      updateType = _useState2[0],
+      setUpdateType = _useState2[1];
+
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_mui_material__WEBPACK_IMPORTED_MODULE_5__["default"], {
     maxWidth: "md",
-    children: updateFlag ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_forms_AccountUpdate__WEBPACK_IMPORTED_MODULE_2__["default"], {
+    children: !updateType ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_components_AccountRead__WEBPACK_IMPORTED_MODULE_1__["default"], {
       authUser: props.authUser,
       handleSetMessage: props.handleSetMessage,
-      setUpdateFlag: setUpdateFlag
-    }) : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_components_AccountRead__WEBPACK_IMPORTED_MODULE_1__["default"], {
+      setUpdateType: setUpdateType
+    }) : updateType === "user" ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_forms_AccountUpdate__WEBPACK_IMPORTED_MODULE_2__["default"], {
       authUser: props.authUser,
       handleSetMessage: props.handleSetMessage,
-      setUpdateFlag: setUpdateFlag
+      setUpdateType: setUpdateType
+    }) : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_forms_PasswordUpdate__WEBPACK_IMPORTED_MODULE_3__["default"], {
+      authUser: props.authUser,
+      handleSetMessage: props.handleSetMessage,
+      setUpdateType: setUpdateType
     })
   });
 }

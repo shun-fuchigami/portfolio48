@@ -137,6 +137,7 @@ return [
         'email' => 'メールアドレス',
         'name' => '名前',
         'password' => 'パスワード',
+        'prevPassword' => '変更前のパスワード',
         'intro' => '自己紹介',
         'positions' => 'ポジション',
         'tags' => 'タグ',
