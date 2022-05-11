@@ -1,5 +1,5 @@
 import React, { useEffect,useState } from 'react';
-import { Card,CardHeader,CardMedia,Typography,Container,CardContent,Divider,CardActions,Button } from '@mui/material';
+import { Card,CardHeader,CardMedia,Typography,Container,CardContent,Divider,CardActions,Button,Chip,Box } from '@mui/material';
 import FiberNewIcon from '@mui/icons-material/FiberNew';
 import { textNewLine } from '../util';
 
@@ -61,10 +61,11 @@ export function Home(){
                     sx={{
                         mt:0,
                         p:5,
+                        pb:6,
                         overflowX:'scroll',
                         border:"1px solid rgba(0,0,0,0.12)",
                         borderRadius:1,
-                        whiteSpace:'nowrap',
+                        display:'flex',
                         }}
                 >
                     {
@@ -75,7 +76,13 @@ export function Home(){
                                         elevation={4}
                                         key={index}
                                         raised
-                                        sx={{position:'relative',height:'350px', width:'300px',whiteSpace:'normal',display:'inline-block',ml:2,mr:2 }}
+                                        sx={{
+                                            display:'flex',
+                                            flexDirection:'column',
+                                            position:'relative',
+                                            height:'450px',
+                                            minWidth:'350px',
+                                            ml:2,mr:2 }}
                                     >
                                         <FiberNewIcon fontSize='medium' sx={{display:'block', mt:1,ml:'15px', color:"#f44336"}}/>
                                         <CardHeader
@@ -88,11 +95,11 @@ export function Home(){
                                         <Divider variant="middle"/>
                                         <CardContent sx={{mt:1}}>
                                             {   recruitment.desc.length <= 55?
-                                                    <Typography variant='caption'>
+                                                    <Typography variant='caption' >
                                                         {textNewLine(recruitment.desc)}
                                                     </Typography>
                                                 :
-                                                    <div>
+                                                    <div sx={{mb:2}}    >
                                                         <Typography variant='caption'>
                                                             {textNewLine(recruitment.desc.substr(0,55))}
                                                         </Typography>
@@ -102,15 +109,27 @@ export function Home(){
                                                     </div>
                                             }
                                         </CardContent>
+                                        <CardContent sx={{mt:'auto'}}>
+                                            <Box sx={{display:'flex', flexWrap:'wrap', gap:0.5, alignSelf:'start'}}>
+                                                {recruitment.tags.length ?
+                                                    recruitment.tags.map((tag,index)=>{
+                                                        return(
+                                                            <Chip size='small' key={index} label={tag.name} sx={{fontSize:'12px'}}/>
+                                                            )
+                                                        })
+                                                        :null
+                                                    }
+                                            </Box>
+                                        </CardContent>
                                         <CardActions
-                                            sx={{pb:0, position:'absolute', bottom:8, left:0, right:0, justifyContent:'center', ml:'auto',mr:'auto'}}
+                                            sx={{pb:0, justifyContent:'center', ml:'auto',mr:'auto',mt:'auto',mb:1}}
                                         >
-                                            <Button size="small" color="primary" href={`/team/?teamId=${recruitment.teams.id}`}>
+                                            <Button size="small" href={`/team/?teamId=${recruitment.teams.id}`}>
                                                 <Typography variant='caption'>
                                                     チームの詳細確認
                                                 </Typography>
                                             </Button>
-                                            <Button size="small" sx={{mr:1}} color="primary" href={`/recruitment?recruitmentId=${recruitment.id}`} >
+                                            <Button size="small" sx={{mr:1}} href={`/recruitment?recruitmentId=${recruitment.id}`} >
                                                 <Typography variant='caption'>
                                                     募集ページ確認
                                                 </Typography>

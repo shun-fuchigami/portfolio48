@@ -1,49 +1,142 @@
-
 import React, { useEffect, useState } from 'react';
-import ReactDOM from 'react-dom';
-import { Box,Card,Typography,CardHeader,CardActions,Button,CardContent,List,ListItem,ListItemText } from '@mui/material';
+import { Card,CardHeader, } from '@mui/material';
 import axios from 'axios';
+import { ApplicantUser } from '../components/ApplicantUser';
+import { RecruitmentContent } from '../components/RecruitmentContent';
 import { useLocation } from 'react-router-dom';
-import Modal from '@mui/material/Modal';
-import { textNewLine } from '../util';
+import { ModalAuthenticated } from '../components/ModalAuthenticated';
+import { ModalCommon } from '../components/ModalCommon';
 
+
+/**
+ * メンバ募集の個別詳細ページ
+ * @param {*} props
+ * @returns
+ */
 export default function Recruitment(props){
+
+    const [recruitments,setRecruitments] = useState([]);
 
     const search = useLocation().search;
     const query = new URLSearchParams(search);
-    const [open, setOpen] = React.useState(false);
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
 
-    const[selected,setSelected] = useState()
+    const [selected,setSelected] = useState();
+    const [handler,setHandler] = useState();
+    const [modalText,setModalText] = useState();
+    const [openModal, setOpenModal] = useState(false);
+    const [openModalAuth, setOpenModalAuth] = useState(false);
 
-    const [openConsent, setOpenConsent] = React.useState(false);
-    const handleOpenConsent = (prop) => (e) => {
-        setOpenConsent(true);
+    /**
+     * 応募のモーダルを表示
+     * OKボタン押下時のハンドラーをセット
+     * @param {Integer} prop 応募した募集のid
+     * @returns
+     */
+     const handleOpenModalAuth = (prop) => (e) =>  {
+        e.preventDefault();
         setSelected(prop);
-    }
-    const handleCloseConsent = () => setOpenConsent(false);
+        setOpenModalAuth(true);
+        setHandler(()=>appRecruitment);
+        setModalText("この募集へ応募します。よろしいですか？");
+    };
 
-    const [openDeny, setOpenDeny] = React.useState(false);
-    const handleOpenDeny = (prop) => () => {
-        setOpenDeny(true);
+    /**
+     * 応募時のモーダルを非表示
+     * @returns
+     */
+    const handleCloseModalAuth = () => setOpenModalAuth(false);
+
+    /**
+     * 応募許可のモーダルを表示
+     * 応募ユーザのIdをセット
+     * OKボタン押下時のハンドラーをセット
+     * @param {Integer} prop 応募したユーザのid
+     * @returns
+     */
+    console.log(handler);
+    console.log(selected);
+
+    const handleOpenConsentModal = (prop) => (e) => {
+        e.preventDefault();
         setSelected(prop);
-    }
-    const handleCloseDeny = () => setOpenDeny(false);
+        setOpenModal(true);
+        setModalText("このユーザの応募を許可します。よろしいですか？");
+        setHandler(()=>consentApp);
+    };
 
-    const [recruitments,setRecruitments] = useState([]);
-    const style = {
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        maxWidth: 400,
-        minWidth: 200,
-        bgcolor: 'background.paper',
-        border: '2px solid #000',
-        boxShadow: 24,
-        p: 4,
-      };
+    /**
+     * 応募拒否のモーダルを表示
+     * 応募ユーザのIdをセット
+     * OKボタン押下時のハンドラーをセット
+     * @param {Integer} prop 応募したユーザのid
+     * @returns
+     */
+    const handleOpenDenyModal = (prop) => (e) => {
+        e.preventDefault();
+        setSelected(prop);
+        setOpenModal(true);
+        setModalText("このユーザの応募を拒否します。よろしいですか？");
+        setHandler(()=>denyApp);
+    };
+
+    /**
+     * 応募許可・拒否のモーダルを非表示
+     * @returns
+     */
+    const handleCloseModal = () => setOpenModal(false);
+
+
+    /**
+     * 募集への応募処理
+     * @param {Integer} prop 応募する募集のid
+     */
+     function appRecruitment(prop){
+        axios.post(`/api/recruitment/app?recruitmentId=${prop}&userId=${props.authUser.id}`)
+            .then((response)=>{
+                console.log(response.data);
+                props.handleSetMessage(response.data,"success");
+                window.location.href = `/recruitment?recruitmentId=${prop}`;
+            })
+            .catch( e =>{
+                console.log(e.response);
+                props.handleSetMessage(e.response.data,"error");
+                handleClose();
+            })
+    }
+
+    /**
+     * 応募の許可処理
+     * @param {Integer} prop 応募したユーザのid
+     */
+    const consentApp = (prop) => {
+    axios.post(`/api/recruitment/app/consent?recruitmentId=${query.get('recruitmentId')}&userId=${prop}`)
+        .then((response)=>{
+            console.log(response.data);
+            props.handleSetMessage(response.data,"success");
+            window.location.href = `/recruitment?recruitmentId=${query.get('recruitmentId')}`;
+        })
+        .catch( e =>{
+            console.log(e.response);
+            props.handleSetMessage(e.response.data,"error");
+        })
+    }
+
+    /**
+     * 応募の拒否処理
+     * @param {Integer} prop 応募したユーザのid
+     */
+    const denyApp = (prop) => {
+        axios.post(`/api/recruitment/app/deny?recruitmentId=${query.get('recruitmentId')}&userId=${prop}`)
+            .then((response)=>{
+                console.log(response.data);
+                props.handleSetMessage(response.data,"success");
+                window.location.href = `/recruitment?recruitmentId=${query.get('recruitmentId')}`;
+            })
+            .catch( e =>{
+                console.log(e.response);
+                props.handleSetMessage(e.response.data,"error");
+            })
+    }
 
     /**
      * メンバ募集のAPI取得
@@ -55,283 +148,54 @@ export default function Recruitment(props){
                 setRecruitments(response.data);
             })
             .catch( e =>{
-                console.log(e);
+                console.log(e.response);
             })
     };
 
     /**
-     * 募集への応募処理
+     * ページ読み込み完了後に募集情報を取得
      */
-    function appRecruitment(){
-        axios.post(`/api/recruitment/app?recruitmentId=${query.get('recruitmentId')}&userId=${props.authUser.id}`)
-            .then((response)=>{
-                console.log(response.data);
-                props.handleSetStatus("success");
-                window.location.href = `/recruitment?recruitmentId=${query.get('recruitmentId')}`;
-            })
-            .catch( e =>{
-                console.log(e);
-                props.handleSetStatus("error");
-            })
-    }
-
-    /**
-     * 応募の承諾処理
-     * @param {*} prop
-     */
-    const consentApp = (e) => {
-        axios.post(`/api/recruitment/app/consent?recruitmentId=${query.get('recruitmentId')}&userId=${selected}`)
-            .then((response)=>{
-                console.log(response.data);
-                props.handleSetStatus("success");
-                window.location.href = `/recruitment?recruitmentId=${query.get('recruitmentId')}`;
-            })
-            .catch( e =>{
-                console.log(e);
-                props.handleSetStatus("error");
-            })
-    }
-
-    /**
-     * 応募の拒否処理
-     * @param {*} prop
-     */
-    const denyApp = (e) => {
-        axios.post(`/api/recruitment/app/deny?recruitmentId=${query.get('recruitmentId')}&userId=${selected}`)
-            .then((response)=>{
-                console.log(response.data);
-                props.handleSetStatus("success");
-                window.location.href = `/recruitment?recruitmentId=${query.get('recruitmentId')}`;
-            })
-            .catch( e =>{
-                console.log(e);
-                props.handleSetStatus("error");
-            })
-    }
-
-
     useEffect(()=>{
         getRecruitment();
     },[])
 
-
     return(
         <Card elevation={0} sx={{maxWidth:'md', mt:5, ml:'auto', mr:'auto'}}>
-        <CardHeader title={"メンバ募集一覧"}  />
+        <CardHeader title={"メンバ募集詳細ページ"}  />
+            {/* 応募許可・拒否時のモーダル */}
+            <ModalCommon
+                modalText={modalText}
+                openModal={openModal}
+                handleCloseModal={handleCloseModal}
+                handler={handler}
+                selected={selected}
+                />
 
-        <Modal
-            open={open}
-            onClose={handleClose}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-            >
-            {props.authUser.isLogin?
-                <Card sx={style}>
-                    <Typography id="modal-modal-title" variant="h6" component="h2" >
-                        メンバ募集へ応募します。よろしいですか？
-                    </Typography>
-                    <Card elevation={0} sx={{ display:'flex', mt:2, p:1, justifyContent:'space-evenly'}}>
-                        <Button size="small" color="primary" variant='contained' onClick={appRecruitment} >
-                            <Typography>
-                                OK
-                            </Typography>
-                        </Button>
-                        <Button size="small" color="primary" variant='contained' onClick={handleClose} >
-                            <Typography>
-                                キャンセル
-                            </Typography>
-                        </Button>
-                    </Card>
-                </Card>
-            :
-                <Card sx={style}>
-                    <Typography id="modal-modal-title" variant="h6" component="h2" sx={{pb:2}}>
-                        応募するにはログインが必要です。
-                    </Typography>
-                    <Typography id="modal-modal-p-1" variant="caption" component="p">
-                        アカウントをお持ちの方はログインページよりログインしてください。
-                    </Typography>
-                    <Typography id="modal-modal-p-2" variant="caption" component="p">
-                        アカウントをお持ちでない方は新規ユーザ登録ページより登録してください。
-                    </Typography>
-                    <Card elevation={0} sx={{ display:'flex', mt:2, p:1, justifyContent:'space-evenly'}}>
-                        <Button size="small" color="primary" variant='text' href="/login">
-                            <Typography>
-                                ログインへ
-                            </Typography>
-                        </Button>
-                        <Button size="small" color="primary" variant='text' href="/register" >
-                            <Typography>
-                                新規ユーザ登録へ
-                            </Typography>
-                        </Button>
-                    </Card>
-                </Card>
-            }
-        </Modal>
+            {/* 応募時のモーダル 未ログイン時はログイン導線へ案内 */}
+            <ModalAuthenticated
+                modalText={modalText}
+                openModalAuth={openModalAuth}
+                handleCloseModalAuth={handleCloseModalAuth}
+                handler={handler}
+                selected={selected}
+                authUser={props.authUser}
+            />
 
-        <Modal
-                    open={openConsent}
-                    onClose={handleCloseConsent}
-                    aria-labelledby="modal-modal-title"
-                    aria-describedby="modal-modal-description"
-                >
-            <Card sx={style}>
-                <Typography id="modal-modal-title" variant="h6" component="h2" >
-                    このユーザの参加を承諾します。よろしいですか？
-                </Typography>
-                <Card elevation={0} sx={{ display:'flex', mt:2, p:1, justifyContent:'space-evenly'}}>
-                    <Button size="small" color="primary" variant='contained' onClick={consentApp} >
-                        <Typography>
-                            OK
-                        </Typography>
-                    </Button>
-                    <Button size="small" color="primary" variant='contained' onClick={handleCloseConsent} >
-                        <Typography>
-                            キャンセル
-                        </Typography>
-                    </Button>
-                </Card>
-            </Card>
-        </Modal>
-        <Modal
-            open={openDeny}
-            onClose={handleCloseDeny}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-        >
-            <Card sx={style}>
-                <Typography id="modal-modal-title" variant="h6" component="h2" >
-                    このユーザの参加を拒否します。よろしいですか？
-                </Typography>
-                <Card elevation={0} sx={{ display:'flex', mt:2, p:1, justifyContent:'space-evenly'}}>
-                    <Button size="small" color="primary" variant='contained' onClick={denyApp} >
-                        <Typography>
-                            OK
-                        </Typography>
-                    </Button>
-                    <Button size="small" color="primary" variant='contained' onClick={handleCloseDeny} >
-                        <Typography>
-                            キャンセル
-                        </Typography>
-                    </Button>
-                </Card>
-            </Card>
-        </Modal>
+            {/* 募集情報 */}
+            <RecruitmentContent
+                recruitments={recruitments}
+                authUser={props.authUser}
+                handleOpenModalAuth={handleOpenModalAuth}
+            />
 
 
-        { recruitments.length?
-            recruitments.map ((recruitment,index)=>{
-                return(
-                    <Card key={index} sx={{p:2,m:2}} variant="outlined" >
-                        <CardContent>
-                            <List>
-                                <ListItem>
-                                    <ListItemText primary="募集チーム" secondary={recruitment.teams.name} />
-                                </ListItem>
-                                <ListItem>
-                                    <ListItemText primary="活動エリア" secondary={textNewLine(recruitment.teams.area)} />
-                                </ListItem>
-                                <ListItem>
-                                    <ListItemText primary="募集タイトル" secondary={recruitment.title} />
-                                </ListItem>
-                                <ListItem>
-                                    <ListItemText primary="募集内容" secondary={textNewLine(recruitment.desc)} />
-                                </ListItem>
-                                <ListItem sx={{display:'flex',flexDirection:'column',alignItems:'start'}}>
-                                    <ListItemText primary="タグ"/>
-                                    <Card elevation={0} sx ={{ display:'flex', flexWrap:'wrap', gap:1, p:1 }}>
-                                        {recruitment.tags.length ?
-                                            recruitment.tags.map((tag,index)=>{
-                                                return(
-                                                    <Card key={index} variant="outlined" sx={{display:'flex', p:1}} >
-                                                        <Typography variant='caption'>
-                                                            {tag.name}
-                                                        </Typography>
-                                                    </Card>
-                                                    )
-                                                })
-                                                :null
-                                            }
-                                    </Card>
-                                </ListItem>
-                            </List>
-                        </CardContent>
-                        <CardActions sx={{pb:0, justifyContent:'end'}}>
-                            <Button size="small" color="primary" href={`/team/?teamId=${recruitment.teams.id}`}>
-                                <Typography>
-                                    チームの詳細確認
-                                </Typography>
-                            </Button>
-                            <Button size="small" color="primary" onClick={handleOpen}>
-                                <Typography>
-                                    募集へ応募
-                                </Typography>
-                            </Button>
-                        </CardActions>
-                    </Card>
-                );
-            })
-            :
-            <Card sx={{p:2, m:2}} variant="outlined" >
-                <CardContent>
-                    <List>
-                        <ListItem>
-                            <ListItemText primary="募集がまだありません"/>
-                        </ListItem>
-                    </List>
-                </CardContent>
-             </Card>
-        }
-        {   recruitments.length &&
-            recruitments[0].users.length ?
-                props.authUser.id === recruitments[0].teams.owner_id ?
-                recruitments[0].users.map((user,index)=>{
-                    return(
-                        <Card key={index} sx={{p:2,m:2}} variant="outlined" >
-                            <CardContent>
-                                <List>
-                                    <ListItem>
-                                        <ListItemText primary="応募したユーザ名" secondary={user.name} />
-                                    </ListItem>
-                                </List>
-                            </CardContent>
-                            <CardActions sx={{pb:0, justifyContent:'end'}}>
-                                <Button size="small" color="primary" onClick={handleOpenConsent(user.id)} >
-                                    <Typography>
-                                        チーム参加承諾
-                                    </Typography>
-                                </Button>
-                                <Button size="small" color="primary" onClick={handleOpenDeny(user.id)} >
-                                    <Typography>
-                                        チーム参加拒否
-                                    </Typography>
-                                </Button>
-                            </CardActions>
-                        </Card>
-                    )
-                })
-                :
-                <Card sx={{p:2, m:2}} variant="outlined" >
-                    <CardContent>
-                        <List>
-                            <ListItem>
-                                <ListItemText primary={`応募数`} secondary={recruitments[0].users.length}/>
-                            </ListItem>
-                        </List>
-                    </CardContent>
-                </Card>
-            :
-            <Card sx={{p:2, m:2}} variant="outlined" >
-                <CardContent>
-                    <List>
-                        <ListItem>
-                            <ListItemText primary={"応募がまだありません。"}/>
-                        </ListItem>
-                    </List>
-                </CardContent>
-            </Card>
-        }
+            {/* 応募者情報 オーナーユーザでない場合は応募数のみ表示 */}
+            <ApplicantUser
+                recruitments={recruitments}
+                authUser={props.authUser}
+                handleOpenConsentModal={handleOpenConsentModal}
+                handleOpenDenyModal={handleOpenDenyModal}
+            />
         </Card>
     );
 }

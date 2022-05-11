@@ -12,16 +12,14 @@ export default function AccountTeam(props){
             <OwnerTeam
                 authUser={props.authUser}
                 belongsTeam={props.belongsTeam}
-                getBelongsTeam={props.getBelongsTeam}
                 ownerTeam={props.ownerTeam}
-                getOwnerTeam={props.getOwnerTeam}
+                handleSetMessage={props.handleSetMessage}
                 />
             <BelongsTeam
                 authUser={props.authUser}
                 belongsTeam={props.belongsTeam}
-                getBelongsTeam={props.getBelongsTeam}
                 ownerTeam={props.ownerTeam}
-                getOwnerTeam={props.getOwnerTeam}
+                handleSetMessage={props.handleSetMessage}
                 />
         </Container>
     );

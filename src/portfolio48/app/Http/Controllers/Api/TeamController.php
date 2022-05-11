@@ -9,6 +9,8 @@ use App\Models\User;
 use App\Models\Team;
 use App\Models\Recruitment;
 use App\Models\Tag;
+use Illuminate\Support\Facades\Validator;
+
 
 class TeamController extends Controller
 {
@@ -17,12 +19,16 @@ class TeamController extends Controller
      */
     public function create(Request $request){
 
-        $validated = $request->validate([
+        $validator = Validator::make($request->all(), [
             'userId'  =>  'required',
             'name' => 'required|unique:teams|max:20',
             'desc' => 'max:300',
             'area' => 'required|max:100',
         ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->messages(), Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
 
         $userId = $request -> userId;
 
@@ -33,7 +39,7 @@ class TeamController extends Controller
         $team -> owner_id = $request->userId;
         $team -> save();
 
-        return response()->json('チーム登録が完了しました。', Response::HTTP_OK);
+        return response()->json(['message'=>["チーム登録が完了しました。"]], Response::HTTP_OK);
     }
 
     /**
@@ -64,7 +70,7 @@ class TeamController extends Controller
             'teamId'  =>  'required',
         ]);
 
-        $team = Team::with(['users','ownerUser'])->where('id', $request->teamId)->get();
+        $team = Team::with(['users.positions','ownerUser.positions'])->where('id', $request->teamId)->get();
         return response()->json($team, Response::HTTP_OK);
     }
 

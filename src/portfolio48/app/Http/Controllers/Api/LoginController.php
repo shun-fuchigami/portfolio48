@@ -7,6 +7,7 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use \Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Validator;
 
 class LoginController extends Controller
 {
@@ -33,22 +34,27 @@ class LoginController extends Controller
             $user->tokens()->where('name', 'token-name')->delete();
             $token = $user->createToken('token-name')->plainTextToken;
 
-            return response()->json('ログインに成功しました。', Response::HTTP_OK);
+            return response()->json(['message'=>['ログインに成功しました']], Response::HTTP_OK);
         }
-        return response()->json('一致するユーザが見つかりません。', Response::HTTP_BAD_REQUEST);
+        return response()->json(['message'=>['認証に失敗しました。']], Response::HTTP_BAD_REQUEST);
 
     }
 
-
     /**
-     * ログアウト
+     * Log the user out of the application.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response|\Illuminate\Http\JsonResponse
      */
     public function logout(Request $request)
     {
-        Auth::logout();
-        return response()->json('ログアウトしました。', Response::HTTP_OK);
+        $this->guard()->logout();
+
+        $request->session()->invalidate();
+
+        $request->session()->regenerateToken();
+
+        return response()->json(['message'=>['ログアウトが完了しました']], Response::HTTP_OK);
     }
+
 }

@@ -343,8 +343,15 @@ php artisan make:migration create_'recruitment_user'_table --create=recruitment_
 php artisan make:model Team
 php artisan make:model Tag
 php artisan make:model Recruitment
+php artisan make:model Position
 
 php artisan make:controller Api/TeamController
 php artisan make:controller Api/TagController
 php artisan make:controller Api/RecruitmentController
 ```
+
+CREATE USER 'portfolio'@localhost' IDENTIFIED BY 'portfolio48';
+CREATE USER 'portfolio'@'localhost' IDENTIFIED BY 'P0-tfolio';
+CREATE DATABASE footbar;
+GRANT All ON footbar.* TO 'portfolio'@'localhost';
+FLUSH PRIVILEGES;

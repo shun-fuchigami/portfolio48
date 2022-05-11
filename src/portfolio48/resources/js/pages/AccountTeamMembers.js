@@ -156,6 +156,9 @@ export default function AccountTeamMembers(props){
                                             <ListItemText primary="オーナー名" secondary={teamMembers[0].owner_user.name} />
                                         </ListItem>
                                         <ListItem>
+                                            <ListItemText primary="自己紹介" secondary={teamMembers[0].owner_user.intro} />
+                                        </ListItem>
+                                        <ListItem>
                                             <ListItemText primary="登録メールアドレス" secondary={teamMembers[0].owner_user.email} />
                                         </ListItem>
                                     </List>
@@ -172,6 +175,9 @@ export default function AccountTeamMembers(props){
                                         <List>
                                             <ListItem>
                                                 <ListItemText primary="ユーザ名" secondary={user.name} />
+                                            </ListItem>
+                                            <ListItem>
+                                                <ListItemText primary="自己紹介" secondary={user.intro} />
                                             </ListItem>
                                             <ListItem>
                                                 <ListItemText primary="登録メールアドレス" secondary={user.email} />
